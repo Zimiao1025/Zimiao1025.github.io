@@ -56,15 +56,22 @@ Consider a Biomni-style research loop:
 Echo-Bio does not train a new biomedical model. It asks whether the **harness** around the same research policy can execute this loop more efficiently.
 
 <div class="table-scroll">
-<table class="result-table">
+<table class="result-table experiment-control-table">
   <thead><tr><th>Held fixed in both arms</th><th>Allowed to change</th></tr></thead>
   <tbody>
-    <tr><td>Biomedical research policy and base model</td><td rowspan="6">One registered harness mechanism—for example, how completion is represented and when the research loop is allowed to stop.</td></tr>
-    <tr><td>Provider, thinking policy, request budget, and price snapshot</td></tr>
-    <tr><td>Scientific runtime, dependencies, data mounts, and execution limits</td></tr>
-    <tr><td>Task bytes and pre-treatment resource context</td></tr>
-    <tr><td>Observer, execution receipts, artifact store, and replay rules</td></tr>
-    <tr><td>Hidden scientific verifier and rubric</td></tr>
+    <tr>
+      <td>
+        <ul class="table-cell-list">
+          <li>Biomedical research policy and base model</li>
+          <li>Provider, thinking policy, request budget, and price snapshot</li>
+          <li>Scientific runtime, dependencies, data mounts, and execution limits</li>
+          <li>Task bytes and pre-treatment resource context</li>
+          <li>Observer, execution receipts, artifact store, and replay rules</li>
+          <li>Hidden scientific verifier and rubric</li>
+        </ul>
+      </td>
+      <td class="treatment-cell"><strong>One registered harness mechanism</strong><span>For example, how completion is represented and when the research loop is allowed to stop.</span></td>
+    </tr>
   </tbody>
 </table>
 </div>

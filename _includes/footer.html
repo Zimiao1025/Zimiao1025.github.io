@@ -1,0 +1,21 @@
+<footer class="site-footer">
+  <div class="shell footer-grid">
+    <div>
+      <a class="wordmark footer-wordmark" href="{{ '/' | relative_url }}">
+        <span class="wordmark-mark" aria-hidden="true">HL</span>
+        <span class="wordmark-name">Hongliang Li</span>
+      </a>
+      <p>Building scientific AI systems for better models of biology and better decisions in drug discovery.</p>
+    </div>
+    <div class="footer-links" aria-label="External links">
+      <a href="mailto:{{ site.author.email }}">Email</a>
+      <a href="https://github.com/{{ site.author.github }}" target="_blank" rel="noreferrer">GitHub</a>
+      <a href="{{ site.author.scholar }}" target="_blank" rel="noreferrer">Google Scholar</a>
+    </div>
+  </div>
+  <div class="shell footer-meta">
+    <span>© <span data-current-year>{{ 'now' | date: '%Y' }}</span> Hongliang Li</span>
+    <span>Designed for curiosity, built for the open web.</span>
+  </div>
+</footer>
+

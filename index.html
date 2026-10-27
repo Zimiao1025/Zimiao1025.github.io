@@ -1,0 +1,223 @@
+---
+layout: default
+title:
+description: "Hongliang Li — AI4Science researcher in biological foundation models, molecular dynamics, affinity prediction, and scientific AI systems."
+body_class: home-page
+---
+
+<section class="hero">
+  <div class="hero-noise" aria-hidden="true"></div>
+  <div class="shell hero-grid">
+    <div class="hero-copy reveal">
+      <p class="eyebrow"><span class="status-dot"></span> AI for Science researcher · Shanghai</p>
+      <h1>Learning the language<br>and <em>motion</em> of life.</h1>
+      <p class="hero-intro">I’m Hongliang Li. I build biological foundation models and scientific AI systems for protein dynamics, molecular interaction, and drug discovery.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#work">Explore my work <span>↓</span></a>
+        <a class="button button-ghost" href="{{ '/assets/files/Hongliang-Li-CV.pdf' | relative_url }}" target="_blank">View CV <span>↗</span></a>
+      </div>
+      <div class="hero-links" aria-label="Profile links">
+        <a href="https://github.com/Zimiao1025" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="{{ site.author.scholar }}" target="_blank" rel="noreferrer">Google Scholar</a>
+        <a href="mailto:{{ site.author.email }}">Email</a>
+      </div>
+    </div>
+
+    <div class="hero-visual reveal" aria-label="Abstract biomolecular landscape">
+      <svg class="molecule-map" viewBox="0 0 620 620" role="img" aria-labelledby="molecule-title molecule-desc">
+        <title id="molecule-title">A generative biomolecular landscape</title>
+        <desc id="molecule-desc">Connected molecular nodes and flowing conformational paths.</desc>
+        <defs>
+          <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="#c9ff5c" stop-opacity=".85"/>
+            <stop offset="1" stop-color="#c9ff5c" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="pathGradient" x1="0" x2="1">
+            <stop stop-color="#c9ff5c"/>
+            <stop offset=".55" stop-color="#6dd8c7"/>
+            <stop offset="1" stop-color="#6f88ff"/>
+          </linearGradient>
+          <filter id="blur"><feGaussianBlur stdDeviation="20"/></filter>
+        </defs>
+        <circle cx="323" cy="300" r="160" fill="url(#coreGlow)" filter="url(#blur)" opacity=".18"/>
+        <g class="orbit-lines" fill="none" stroke="rgba(242,240,231,.18)">
+          <ellipse cx="310" cy="310" rx="236" ry="122" transform="rotate(-24 310 310)"/>
+          <ellipse cx="310" cy="310" rx="214" ry="92" transform="rotate(54 310 310)"/>
+          <ellipse cx="310" cy="310" rx="168" ry="245" transform="rotate(13 310 310)"/>
+        </g>
+        <path class="protein-path protein-path-back" d="M75 364C126 280 184 405 237 319s94-204 151-95 95 198 161 62"/>
+        <path class="protein-path" d="M75 364C126 280 184 405 237 319s94-204 151-95 95 198 161 62"/>
+        <path class="protein-path protein-path-alt" d="M107 170c84 40 62 115 137 126s94-85 158-43 7 126 99 175"/>
+        <g class="nodes">
+          <circle cx="75" cy="364" r="8"/><circle cx="142" cy="321" r="5"/>
+          <circle cx="237" cy="319" r="11"/><circle cx="314" cy="217" r="6"/>
+          <circle cx="388" cy="224" r="13"/><circle cx="456" cy="344" r="7"/>
+          <circle cx="549" cy="286" r="9"/><circle cx="107" cy="170" r="6"/>
+          <circle cx="244" cy="296" r="6"/><circle cx="402" cy="253" r="5"/>
+          <circle cx="501" cy="428" r="8"/>
+        </g>
+        <g class="annotation" transform="translate(70 487)">
+          <line x1="0" y1="0" x2="76" y2="0"/>
+          <text x="0" y="28">SEQUENCE</text><text x="98" y="28">→</text><text x="132" y="28">STRUCTURE</text><text x="252" y="28">→</text><text x="286" y="28">FUNCTION</text>
+        </g>
+      </svg>
+      <div class="visual-label label-one"><span>01</span> Foundation models</div>
+      <div class="visual-label label-two"><span>02</span> Molecular dynamics</div>
+      <div class="visual-label label-three"><span>03</span> Drug discovery</div>
+    </div>
+  </div>
+  <div class="hero-ticker" aria-hidden="true">
+    <span>BIOLOGICAL FOUNDATION MODELS</span><i>✦</i><span>CONFORMATIONAL ENSEMBLES</span><i>✦</i><span>AFFINITY PREDICTION</span><i>✦</i><span>SCIENTIFIC AGENTS</span>
+  </div>
+</section>
+
+<section class="section about" id="research">
+  <div class="shell section-grid">
+    <div class="section-kicker reveal">
+      <span>01 / Research</span>
+      <p>From representation to reasoned scientific action.</p>
+    </div>
+    <div class="section-main">
+      <div class="statement reveal">
+        <p>I work at the intersection of <strong>machine learning and molecular science</strong>, developing models that treat biology not as a static snapshot, but as a dynamic, multimodal system.</p>
+      </div>
+      <div class="research-grid">
+        <article class="research-card reveal">
+          <span class="card-index">A</span>
+          <h3>Biological<br>foundation models</h3>
+          <p>Multimodal biomolecular representation learning, protein structure generation, and structure–function modeling.</p>
+        </article>
+        <article class="research-card reveal">
+          <span class="card-index">B</span>
+          <h3>AI-driven<br>drug discovery</h3>
+          <p>Unified affinity prediction, molecular design, hit-to-lead optimization, and multi-target modeling across drug modalities.</p>
+        </article>
+        <article class="research-card reveal">
+          <span class="card-index">C</span>
+          <h3>Scientific<br>AI systems</h3>
+          <p>Scalable model orchestration, provenance-aware agents, computational validation, and reproducible decision support.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section projects" id="work">
+  <div class="shell">
+    <div class="section-heading reveal">
+      <div>
+        <span class="eyebrow">02 / Selected work</span>
+        <h2>Systems for seeing<br>biology differently.</h2>
+      </div>
+      <p>Research platforms and benchmarks spanning protein structure, biomolecular dynamics, and unified interaction modeling.</p>
+    </div>
+
+    <div class="project-list">
+      <article class="project-row reveal">
+        <div class="project-num">01</div>
+        <div class="project-title"><h3>AIRFold</h3><span>Systematic protein structure prediction</span></div>
+        <p>A scalable, modular platform combining homology mining, MSA generation, multiple structure predictors, and model-quality estimation.</p>
+        <div class="project-links">
+          <a href="https://atomlab.yanyanlan.com/project/airfold/" target="_blank" rel="noreferrer" aria-label="AIRFold homepage">↗</a>
+          <a href="https://github.com/THU-ATOM/AIRFold" target="_blank" rel="noreferrer" aria-label="AIRFold GitHub">GH</a>
+        </div>
+      </article>
+      <article class="project-row reveal">
+        <div class="project-num">02</div>
+        <div class="project-title"><h3>OriDyn</h3><span>All-modality conformational ensembles</span></div>
+        <p>An AlphaFold 3-based framework designed to recover diverse, biologically relevant states beyond single-structure prediction.</p>
+        <div class="project-status"><i></i> In development</div>
+      </article>
+      <article class="project-row reveal">
+        <div class="project-num">03</div>
+        <div class="project-title"><h3>ScoreBench</h3><span>All-modality affinity benchmark</span></div>
+        <p>A standardized evaluation suite for binding assessment, affinity optimization, and mutation-effect prediction across therapeutic modalities.</p>
+        <div class="project-status"><i></i> Evaluation</div>
+      </article>
+      <article class="project-row reveal">
+        <div class="project-num">04</div>
+        <div class="project-title"><h3>OriBench</h3><span>AI-powered scientific workbench</span></div>
+        <p>A provenance-aware workbench connecting analysis, design, validation, and decision-making in reproducible drug-discovery workflows.</p>
+        <div class="project-links">
+          <a href="https://oribench.lglab.ac.cn/" target="_blank" rel="noreferrer" aria-label="OriBench platform">↗</a>
+          <a href="https://oribench.lglab.ac.cn/docs.html" target="_blank" rel="noreferrer" aria-label="OriBench documentation">DOC</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section journey">
+  <div class="shell section-grid">
+    <div class="section-kicker reveal">
+      <span>03 / Journey</span>
+      <p>A path through engineering, language models, and molecular science.</p>
+    </div>
+    <div class="timeline">
+      <article class="timeline-item reveal">
+        <div class="timeline-date">2026 —</div>
+        <div><h3>Ph.D. Student</h3><p>Fudan University · Research Institute of Intelligent Complex Systems</p><span>Biology foundation models & AI-driven drug discovery</span></div>
+      </article>
+      <article class="timeline-item reveal">
+        <div class="timeline-date">2025 — 2026</div>
+        <div><h3>Research Engineer</h3><p>Lingang Laboratory · AI Department</p><span>Unified affinity scoring and AI-enabled drug design</span></div>
+      </article>
+      <article class="timeline-item reveal">
+        <div class="timeline-date">2023 — 2025</div>
+        <div><h3>Research Assistant</h3><p>Tsinghua University · AIR, ATOM Lab</p><span>Protein conformation generation and structural validation</span></div>
+      </article>
+      <article class="timeline-item reveal">
+        <div class="timeline-date">2020 — 2023</div>
+        <div><h3>M.S. in Computer Science</h3><p>Beijing Institute of Technology</p><span>NLP & biological language models</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section publications" id="publications">
+  <div class="shell">
+    <div class="section-heading reveal">
+      <div><span class="eyebrow">04 / Publications</span><h2>Selected writing<br>& research.</h2></div>
+      <a class="text-link" href="{{ site.author.scholar }}" target="_blank" rel="noreferrer">Full record on Scholar <span>↗</span></a>
+    </div>
+    <ol class="publication-list">
+      <li class="reveal">
+        <a href="https://doi.org/10.1371/journal.pcbi.1011214" target="_blank" rel="noreferrer">
+          <span class="pub-year">2023</span><span class="pub-title">BioSeq-Diabolo: Biological Sequence Similarity Analysis Using Diabolo Embeddings</span><span class="pub-venue">PLOS Computational Biology</span><span class="pub-arrow">↗</span>
+        </a>
+      </li>
+      <li class="reveal">
+        <a href="https://doi.org/10.1093/nar/gkab829" target="_blank" rel="noreferrer">
+          <span class="pub-year">2021</span><span class="pub-title">BioSeq-BLM: A Comprehensive Platform for Analyzing DNA, RNA, and Protein Sequences</span><span class="pub-venue">Nucleic Acids Research</span><span class="pub-arrow">↗</span>
+        </a>
+      </li>
+      <li class="reveal">
+        <a href="https://doi.org/10.3389/fimmu.2021.778298" target="_blank" rel="noreferrer">
+          <span class="pub-year">2021</span><span class="pub-title">Dual UMIs and Dual Barcodes With Minimal PCR Amplification</span><span class="pub-venue">Frontiers in Immunology</span><span class="pub-arrow">↗</span>
+        </a>
+      </li>
+      <li class="reveal">
+        <a href="https://doi.org/10.1016/j.proci.2020.07.126" target="_blank" rel="noreferrer">
+          <span class="pub-year">2020</span><span class="pub-title">Optical Properties of PAH Clusters with Surface Formyl Groups</span><span class="pub-venue">Proceedings of the Combustion Institute</span><span class="pub-arrow">↗</span>
+        </a>
+      </li>
+    </ol>
+    <p class="publication-note reveal">Also under review: <strong>OriScore</strong>, a unified affinity-scoring framework spanning small molecules, antibodies, and peptides.</p>
+  </div>
+</section>
+
+<section class="section notes-preview">
+  <div class="shell notes-panel reveal">
+    <div class="notes-copy">
+      <span class="eyebrow">05 / Field notes</span>
+      <h2>Ideas in progress,<br>shared in the open.</h2>
+      <p>Research notes on foundation models, molecular dynamics, scientific agents, and the craft of building reliable AI systems for science.</p>
+      <a class="button button-light" href="{{ '/blog/' | relative_url }}">Visit the blog <span>↗</span></a>
+    </div>
+    <div class="notes-stack" aria-hidden="true">
+      <div class="note-card note-card-one"><span>MODELS</span><p>What should a biological foundation model actually understand?</p><i>01</i></div>
+      <div class="note-card note-card-two"><span>DYNAMICS</span><p>Why one structure is never the whole story.</p><i>02</i></div>
+      <div class="note-card note-card-three"><span>SYSTEMS</span><p>Provenance as a first-class object in scientific AI.</p><i>03</i></div>
+    </div>
+  </div>
+</section>

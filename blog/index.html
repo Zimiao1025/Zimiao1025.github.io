@@ -1,0 +1,56 @@
+---
+layout: default
+title: Field Notes
+description: "Research notes by Hongliang Li on biological foundation models, molecular dynamics, drug discovery, and scientific AI systems."
+body_class: blog-page
+permalink: /blog/
+---
+
+<section class="blog-hero">
+  <div class="shell reveal">
+    <div class="eyebrow">Field notes / 研究札记</div>
+    <h1>Thinking in<br><em>public.</em></h1>
+    <p>Working notes on biological foundation models, molecular dynamics, scientific agents, and the practical details that rarely fit into a paper.</p>
+  </div>
+</section>
+
+<section class="blog-index section">
+  <div class="shell">
+    {% if site.posts.size > 0 %}
+      <div class="post-list">
+        {% for post in site.posts %}
+          <article class="post-card reveal">
+            <a href="{{ post.url | relative_url }}">
+              <div class="post-card-meta">
+                <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+                {% if post.tags %}<span>{{ post.tags | first }}</span>{% endif %}
+              </div>
+              <h2>{{ post.title }}</h2>
+              {% if post.description %}<p>{{ post.description }}</p>{% endif %}
+              <span class="post-card-link">Read note <i>↗</i></span>
+            </a>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-notes reveal">
+        <span class="empty-mark">01</span>
+        <div>
+          <h2>The notebook is open.</h2>
+          <p>The first essay is taking shape. Future posts will appear here as a searchable, permanent record of ideas and experiments.</p>
+          <a class="text-link" href="mailto:{{ site.author.email }}">Suggest a topic <span>↗</span></a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="blog-topics">
+  <div class="shell">
+    <p class="eyebrow">Recurring threads</p>
+    <div class="topic-marquee" aria-label="Blog topics">
+      <span>Biological foundation models</span><i>✦</i><span>Conformational dynamics</span><i>✦</i><span>Affinity prediction</span><i>✦</i><span>Scientific agents</span>
+    </div>
+  </div>
+</section>
+

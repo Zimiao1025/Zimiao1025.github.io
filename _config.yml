@@ -1,0 +1,34 @@
+title: "Hongliang Li"
+tagline: "AI for Science · Biological Foundation Models · Drug Discovery"
+description: >-
+  Hongliang Li is an AI4Science researcher working on biological foundation
+  models, biomolecular dynamics, affinity prediction, and scientific AI systems.
+url: "https://zimiao1025.github.io"
+baseurl: ""
+lang: en
+timezone: Asia/Shanghai
+
+author:
+  name: "Hongliang Li"
+  email: "leon_02@aliyun.com"
+  github: "Zimiao1025"
+  scholar: "https://scholar.google.com/citations?user=Fk49kawAAAAJ&hl=en"
+
+permalink: /blog/:year/:month/:day/:title/
+future: false
+show_drafts: false
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: post
+      author: Hongliang Li
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - BLOGGING.md
+

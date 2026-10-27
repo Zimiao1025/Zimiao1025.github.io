@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="980" viewBox="0 0 1500 980" role="img" aria-labelledby="title desc">
+  <title id="title">P5 typed-evidence control plane</title>
+  <desc id="desc">A task and shared resource receipt define public evidence requirements. Executed code, artifacts, and receipts feed a deterministic reducer that continues, finalizes, or fails closed before independent verification.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#61788c"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="15" flood-color="#182633" flood-opacity=".12"/>
+    </filter>
+  </defs>
+  <rect width="1500" height="980" rx="30" fill="#f0efec"/>
+  <text x="76" y="84" fill="#182633" font-family="Georgia, serif" font-size="48">Completion becomes typed state</text>
+  <text x="78" y="128" fill="#666e72" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="19">The model proposes scientific work; the control plane decides whether the execution contract is complete.</text>
+
+  <g filter="url(#shadow)" font-family="Avenir Next, Helvetica, Arial, sans-serif">
+    <rect x="84" y="200" width="316" height="128" rx="22" fill="#61788c"/>
+    <text x="116" y="242" fill="#e6e4df" fill-opacity=".72" font-size="14" font-weight="800" letter-spacing="2">PUBLIC INPUT</text>
+    <text x="116" y="287" fill="#f0efec" font-family="Georgia, serif" font-size="32">Scientific task</text>
+
+    <rect x="84" y="372" width="316" height="128" rx="22" fill="#866550"/>
+    <text x="116" y="414" fill="#e6e4df" fill-opacity=".72" font-size="14" font-weight="800" letter-spacing="2">SHARED INPUT</text>
+    <text x="116" y="459" fill="#f0efec" font-family="Georgia, serif" font-size="30">Resource receipt</text>
+
+    <rect x="515" y="248" width="392" height="214" rx="26" fill="#e6e4df" stroke="#182633" stroke-opacity=".18" stroke-width="2"/>
+    <text x="555" y="296" fill="#866550" font-size="14" font-weight="800" letter-spacing="2">PUBLIC EVIDENCE COMPILER</text>
+    <text x="555" y="350" fill="#182633" font-family="Georgia, serif" font-size="34">Typed requirements</text>
+    <text x="555" y="392" fill="#666e72" font-size="18">precondition · execution · finalization</text>
+    <text x="555" y="425" fill="#666e72" font-size="18">No expected values or hidden rubric</text>
+
+    <rect x="84" y="606" width="430" height="218" rx="26" fill="#182633"/>
+    <text x="124" y="654" fill="#a8846d" font-size="14" font-weight="800" letter-spacing="2">RESEARCH LOOP</text>
+    <text x="124" y="707" fill="#f0efec" font-family="Georgia, serif" font-size="34">Code + tool execution</text>
+    <text x="124" y="756" fill="#e6e4df" fill-opacity=".72" font-size="18">raw observation · artifact</text>
+    <text x="124" y="790" fill="#e6e4df" fill-opacity=".72" font-size="18">workspace · execution receipt</text>
+
+    <rect x="622" y="574" width="400" height="276" rx="30" fill="#2f4944"/>
+    <text x="662" y="624" fill="#a8846d" font-size="14" font-weight="800" letter-spacing="2">DETERMINISTIC REDUCER</text>
+    <text x="662" y="681" fill="#f0efec" font-family="Georgia, serif" font-size="36">What is unresolved?</text>
+    <line x1="662" y1="714" x2="982" y2="714" stroke="#f0efec" stroke-opacity=".20"/>
+    <text x="662" y="754" fill="#e6e4df" font-size="18">Reads real receipts + workspace</text>
+    <text x="662" y="790" fill="#e6e4df" font-size="18">Returns one bounded decision</text>
+
+    <rect x="1110" y="506" width="306" height="96" rx="20" fill="#61788c"/>
+    <text x="1263" y="565" text-anchor="middle" fill="#f0efec" font-size="20" font-weight="800">CONTINUE_BATCH</text>
+    <rect x="1110" y="632" width="306" height="96" rx="20" fill="#a8846d"/>
+    <text x="1263" y="691" text-anchor="middle" fill="#182633" font-size="20" font-weight="800">FINALIZE_NOW</text>
+    <rect x="1110" y="758" width="306" height="96" rx="20" fill="#182633"/>
+    <text x="1263" y="817" text-anchor="middle" fill="#f0efec" font-size="20" font-weight="800">FAIL_CLOSED</text>
+  </g>
+
+  <g fill="none" stroke="#61788c" stroke-width="4" marker-end="url(#arrow)">
+    <path d="M400 264H498"/>
+    <path d="M400 436H455C478 436 490 418 515 403"/>
+    <path d="M710 462V532C710 552 690 562 682 574"/>
+    <path d="M514 714H602"/>
+    <path d="M1022 654C1060 654 1072 554 1094 554"/>
+    <path d="M1022 712H1094"/>
+    <path d="M1022 770C1060 770 1072 806 1094 806"/>
+  </g>
+  <path d="M1110 554H1068C1044 554 1040 888 792 888H322C224 888 180 856 180 824" fill="none" stroke="#61788c" stroke-width="3" stroke-dasharray="8 10" marker-end="url(#arrow)"/>
+  <text x="590" y="922" text-anchor="middle" fill="#61788c" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="16" font-weight="800" letter-spacing="2">ONLY CONTINUE WHEN EXECUTION EVIDENCE IS STILL MISSING AND BUDGET REMAINS</text>
+
+  <rect x="1018" y="212" width="398" height="190" rx="24" fill="#e6e4df" stroke="#526e68" stroke-width="3"/>
+  <text x="1054" y="258" fill="#526e68" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="14" font-weight="800" letter-spacing="2">INDEPENDENT OF P5</text>
+  <text x="1054" y="310" fill="#182633" font-family="Georgia, serif" font-size="31">Scientific verifier</text>
+  <text x="1054" y="352" fill="#666e72" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="17">G2 · rubric · provenance</text>
+  <path d="M1263 632V420" fill="none" stroke="#526e68" stroke-width="4" marker-end="url(#arrow)"/>
+</svg>

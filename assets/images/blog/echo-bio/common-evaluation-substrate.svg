@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Common Evaluation Substrate paired experiment</title>
+  <desc id="desc">Identity and candidate harnesses share task, provider, model, runtime, observer, replay, verifier, and budget; only the harness treatment differs.</desc>
+  <defs>
+    <linearGradient id="substrate" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#182633"/>
+      <stop offset="1" stop-color="#2f4944"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#61788c"/>
+    </marker>
+  </defs>
+  <rect width="1440" height="900" rx="30" fill="#f0efec"/>
+  <text x="84" y="86" fill="#182633" font-family="Georgia, serif" font-size="46">Change the harness—not the experiment</text>
+  <text x="86" y="128" fill="#666e72" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="19">The common substrate is shared measurement infrastructure, not a candidate advantage.</text>
+
+  <g font-family="Avenir Next, Helvetica, Arial, sans-serif">
+    <rect x="84" y="222" width="290" height="236" rx="24" fill="#e6e4df" stroke="#182633" stroke-opacity=".18" stroke-width="2"/>
+    <text x="116" y="267" fill="#866550" font-size="14" font-weight="800" letter-spacing="3">FROZEN INPUT</text>
+    <text x="116" y="316" fill="#182633" font-family="Georgia, serif" font-size="31">Same task</text>
+    <text x="116" y="354" fill="#182633" font-family="Georgia, serif" font-size="31">Same data</text>
+    <text x="116" y="392" fill="#182633" font-family="Georgia, serif" font-size="31">Same schedule</text>
+    <text x="116" y="430" fill="#666e72" font-size="17">Interleaved paired arms</text>
+
+    <path d="M374 340H488" stroke="#61788c" stroke-width="4" marker-end="url(#arrow)"/>
+
+    <rect x="500" y="188" width="406" height="264" rx="26" fill="#61788c"/>
+    <text x="536" y="232" fill="#e6e4df" fill-opacity=".72" font-size="14" font-weight="800" letter-spacing="3">B0 · CONTROL</text>
+    <text x="536" y="287" fill="#f0efec" font-family="Georgia, serif" font-size="36">Identity harness</text>
+    <line x1="536" y1="315" x2="870" y2="315" stroke="#f0efec" stroke-opacity=".26"/>
+    <text x="536" y="354" fill="#f0efec" font-size="18">Research policy unchanged</text>
+    <text x="536" y="388" fill="#f0efec" fill-opacity=".72" font-size="17">No efficiency treatment</text>
+
+    <rect x="500" y="486" width="406" height="264" rx="26" fill="#2f4944"/>
+    <text x="536" y="530" fill="#a8846d" font-size="14" font-weight="800" letter-spacing="3">B1 · CANDIDATE</text>
+    <text x="536" y="585" fill="#f0efec" font-family="Georgia, serif" font-size="36">Echo-Bio harness</text>
+    <line x1="536" y1="613" x2="870" y2="613" stroke="#f0efec" stroke-opacity=".22"/>
+    <text x="536" y="652" fill="#f0efec" font-size="18">Same research policy</text>
+    <text x="536" y="686" fill="#f0efec" fill-opacity=".72" font-size="17">One isolated treatment</text>
+
+    <path d="M906 320H1008" stroke="#61788c" stroke-width="4" marker-end="url(#arrow)"/>
+    <path d="M906 618H1008" stroke="#61788c" stroke-width="4" marker-end="url(#arrow)"/>
+
+    <rect x="1020" y="222" width="336" height="528" rx="26" fill="url(#substrate)"/>
+    <text x="1058" y="268" fill="#a8846d" font-size="14" font-weight="800" letter-spacing="3">COMMON SUBSTRATE</text>
+    <g fill="#f0efec" font-size="19">
+      <text x="1092" y="328">Provider + model policy</text>
+      <text x="1092" y="388">Resource / action ABI</text>
+      <text x="1092" y="448">Scientific runtime</text>
+      <text x="1092" y="508">Lossless observer</text>
+      <text x="1092" y="568">Artifact + replay rules</text>
+      <text x="1092" y="628">Verifier + rubric</text>
+      <text x="1092" y="688">Budget + price snapshot</text>
+    </g>
+    <g fill="#a8846d">
+      <circle cx="1064" cy="322" r="6"/><circle cx="1064" cy="382" r="6"/><circle cx="1064" cy="442" r="6"/>
+      <circle cx="1064" cy="502" r="6"/><circle cx="1064" cy="562" r="6"/><circle cx="1064" cy="622" r="6"/><circle cx="1064" cy="682" r="6"/>
+    </g>
+  </g>
+  <rect x="500" y="790" width="856" height="58" rx="29" fill="#a8846d" fill-opacity=".17"/>
+  <text x="928" y="827" text-anchor="middle" fill="#866550" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="17" font-weight="800" letter-spacing="2">THE ONLY INTENDED DIFFERENCE IS THE HARNESS TREATMENT</text>
+</svg>

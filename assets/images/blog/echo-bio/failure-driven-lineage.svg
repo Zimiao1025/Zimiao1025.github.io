@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="940" viewBox="0 0 1600 940" role="img" aria-labelledby="title desc">
+  <title id="title">Failure-driven Echo-Bio mechanism lineage</title>
+  <desc id="desc">P1 was cheap but degraded scientific capability, P4 used prose control and increased cost, and P5 moved completion to typed deterministic control.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#61788c"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#182633" flood-opacity=".12"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="940" rx="30" fill="#f0efec"/>
+  <text x="82" y="88" fill="#182633" font-family="Georgia, serif" font-size="48">Failures were the design specification</text>
+  <text x="84" y="132" fill="#666e72" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="19">Each successor isolates one lesson from the lineage before it.</text>
+
+  <path d="M252 254C470 190 601 190 758 254S1088 321 1348 238" fill="none" stroke="#61788c" stroke-opacity=".38" stroke-width="4" marker-end="url(#arrow)"/>
+  <circle cx="262" cy="252" r="12" fill="#a8846d"/>
+  <circle cx="780" cy="258" r="12" fill="#866550"/>
+  <circle cx="1335" cy="244" r="12" fill="#2f4944"/>
+
+  <g filter="url(#shadow)" font-family="Avenir Next, Helvetica, Arial, sans-serif">
+    <rect x="72" y="312" width="430" height="480" rx="28" fill="#e6e4df" stroke="#a8846d" stroke-width="3"/>
+    <rect x="585" y="312" width="430" height="480" rx="28" fill="#e6e4df" stroke="#866550" stroke-width="3"/>
+    <rect x="1098" y="312" width="430" height="480" rx="28" fill="#182633"/>
+  </g>
+
+  <g font-family="Avenir Next, Helvetica, Arial, sans-serif">
+    <text x="112" y="366" fill="#866550" font-size="14" font-weight="800" letter-spacing="3">P1 · REJECTED</text>
+    <text x="112" y="425" fill="#182633" font-family="Georgia, serif" font-size="34">“Stop when the</text>
+    <text x="112" y="464" fill="#182633" font-family="Georgia, serif" font-size="34">evidence is complete.”</text>
+    <line x1="112" y1="500" x2="462" y2="500" stroke="#182633" stroke-opacity=".16"/>
+    <text x="112" y="551" fill="#2f4944" font-size="25" font-weight="800">Cost -14.08%</text>
+    <text x="112" y="596" fill="#866550" font-size="22" font-weight="800">Science -0.167</text>
+    <text x="112" y="635" fill="#866550" font-size="22" font-weight="800">+5 hard violations</text>
+    <text x="112" y="700" fill="#666e72" font-size="18">Cheaper because less valid</text>
+    <text x="112" y="730" fill="#666e72" font-size="18">work reached completion.</text>
+
+    <text x="625" y="366" fill="#866550" font-size="14" font-weight="800" letter-spacing="3">P4 · REJECTED</text>
+    <text x="625" y="425" fill="#182633" font-family="Georgia, serif" font-size="34">More precise prose</text>
+    <text x="625" y="464" fill="#182633" font-family="Georgia, serif" font-size="34">about when to stop</text>
+    <line x1="625" y1="500" x2="975" y2="500" stroke="#182633" stroke-opacity=".16"/>
+    <text x="625" y="551" fill="#2f4944" font-size="22" font-weight="800">G2 preserved</text>
+    <text x="625" y="596" fill="#866550" font-size="25" font-weight="800">Cost +29.53%</text>
+    <text x="625" y="635" fill="#866550" font-size="22" font-weight="800">More actions</text>
+    <text x="625" y="700" fill="#666e72" font-size="18">A request for efficiency is</text>
+    <text x="625" y="730" fill="#666e72" font-size="18">not an enforceable control.</text>
+
+    <text x="1138" y="366" fill="#a8846d" font-size="14" font-weight="800" letter-spacing="3">P5 · BOUNDED SUCCESS</text>
+    <text x="1138" y="425" fill="#f0efec" font-family="Georgia, serif" font-size="34">Typed evidence +</text>
+    <text x="1138" y="464" fill="#f0efec" font-family="Georgia, serif" font-size="34">deterministic reducer</text>
+    <line x1="1138" y1="500" x2="1488" y2="500" stroke="#e6e4df" stroke-opacity=".18"/>
+    <text x="1138" y="551" fill="#a8846d" font-size="25" font-weight="800">Search-dev -21.96%</text>
+    <text x="1138" y="596" fill="#e6e4df" font-size="22" font-weight="800">Sealed holdout -8.04%</text>
+    <text x="1138" y="635" fill="#e6e4df" fill-opacity=".68" font-size="17">CI 1.25% to 15.17%</text>
+    <text x="1138" y="700" fill="#e6e4df" fill-opacity=".72" font-size="18">Completion moved from model</text>
+    <text x="1138" y="730" fill="#e6e4df" fill-opacity=".72" font-size="18">prose into a control plane.</text>
+  </g>
+
+  <g font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="2">
+    <rect x="398" y="210" width="278" height="54" rx="27" fill="#61788c"/>
+    <text x="537" y="244" text-anchor="middle" fill="#f0efec">CAPABILITY BEFORE COST</text>
+    <rect x="895" y="208" width="300" height="54" rx="27" fill="#526e68"/>
+    <text x="1045" y="242" text-anchor="middle" fill="#f0efec">CONTROL BEFORE PROMPTING</text>
+  </g>
+
+  <text x="800" y="866" text-anchor="middle" fill="#666e72" font-family="Georgia, serif" font-size="24">A lineage is evidence about mechanism—not a pile of features.</text>
+</svg>

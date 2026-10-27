@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">The false winner under cost-only optimization</title>
+  <desc id="desc">P1 is less expensive but lies below the scientific capability floor, while identity and the bounded P5 result remain above it.</desc>
+  <defs>
+    <marker id="axisArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#182633"/>
+    </marker>
+    <filter id="dotShadow" x="-80%" y="-80%" width="260%" height="260%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#182633" flood-opacity=".20"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="900" rx="30" fill="#f0efec"/>
+  <text x="92" y="90" fill="#182633" font-family="Georgia, serif" font-size="46">The cheapest arm can still be the wrong winner</text>
+  <text x="94" y="132" fill="#666e72" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="19">Selection must happen above a scientific capability floor.</text>
+
+  <rect x="170" y="556" width="1110" height="269" fill="#a8846d" fill-opacity=".13"/>
+  <line x1="170" y1="556" x2="1280" y2="556" stroke="#866550" stroke-width="3" stroke-dasharray="10 10"/>
+  <text x="1260" y="540" text-anchor="end" fill="#866550" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="2">CAPABILITY FLOOR</text>
+  <text x="200" y="630" fill="#866550" font-family="Georgia, serif" font-size="28">Cheaper by losing scientific work</text>
+  <text x="200" y="670" fill="#666e72" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="17">Not eligible for promotion</text>
+
+  <line x1="170" y1="825" x2="1300" y2="825" stroke="#182633" stroke-width="3" marker-end="url(#axisArrow)"/>
+  <line x1="170" y1="825" x2="170" y2="180" stroke="#182633" stroke-width="3" marker-end="url(#axisArrow)"/>
+  <text x="730" y="874" text-anchor="middle" fill="#182633" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="2">LOWER PROVIDER COST</text>
+  <text x="66" y="500" transform="rotate(-90 66 500)" text-anchor="middle" fill="#182633" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="2">SCIENTIFIC CAPABILITY</text>
+
+  <g filter="url(#dotShadow)">
+    <circle cx="410" cy="368" r="32" fill="#61788c"/>
+    <circle cx="780" cy="650" r="40" fill="#a8846d"/>
+    <circle cx="1010" cy="382" r="36" fill="#2f4944"/>
+  </g>
+
+  <g font-family="Avenir Next, Helvetica, Arial, sans-serif">
+    <text x="410" y="312" text-anchor="middle" fill="#182633" font-size="22" font-weight="800">IDENTITY</text>
+    <text x="410" y="342" text-anchor="middle" fill="#666e72" font-size="17">reference harness</text>
+
+    <rect x="570" y="692" width="420" height="108" rx="14" fill="#182633"/>
+    <text x="780" y="728" text-anchor="middle" fill="#f0efec" font-size="22" font-weight="800">P1 · FALSE WINNER</text>
+    <text x="780" y="758" text-anchor="middle" fill="#e6e4df" fill-opacity=".72" font-size="16">cost -14.08% · science -0.167</text>
+    <text x="780" y="783" text-anchor="middle" fill="#e6e4df" fill-opacity=".72" font-size="16">+5 hard violations</text>
+
+    <text x="1010" y="318" text-anchor="middle" fill="#182633" font-size="22" font-weight="800">P5 · BOUNDED</text>
+    <text x="1010" y="348" text-anchor="middle" fill="#666e72" font-size="17">sealed cost -8.04%</text>
+    <text x="1010" y="424" text-anchor="middle" fill="#526e68" font-size="15" font-weight="700">SCIENTIFIC NON-INFERIORITY UNRESOLVED</text>
+  </g>
+
+  <path d="M812 610C852 548 912 486 977 417" fill="none" stroke="#526e68" stroke-width="3" stroke-dasharray="8 10"/>
+  <text x="930" y="520" fill="#526e68" font-family="Georgia, serif" font-size="22">governed successor</text>
+</svg>

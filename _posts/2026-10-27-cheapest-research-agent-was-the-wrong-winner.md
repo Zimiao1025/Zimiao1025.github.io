@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Echo-Bio: More Scientific Iterations per Budget"
-description: "Why efficient recursive self-improvement for biomedical research agents requires preserving executed evidence—not merely the final answer."
+title: "Echo-Bio: When Cost Minimization Fails for Biomedical Research Agents"
+description: "Evidence-Constrained Harness Optimization for Efficient Biomedical Research"
 date: 2026-10-27 09:00:00 +0800
 permalink: /blog/2026/10/27/echo-bio/
 tags: [Scientific Agents, AI for Science, Biomedical AI]
@@ -9,15 +9,13 @@ reading_time: 17
 image: /assets/images/blog/echo-bio/echo-bio-hero.svg
 ---
 
-<p class="post-kicker">Evidence-constrained harness optimization for biomedical research agents</p>
-
-<p class="post-lede">A recursive research agent can improve in two ways: make every iteration better, or make an equally useful iteration cheaper so that the same budget buys more attempts. Echo-Bio studies the second problem—and finds that, in science, “equally useful” is much harder to define than “the final answer looks right.”</p>
+<p class="post-lede">A recursive research agent can improve in two ways: make every iteration better, or make an equally useful iteration cheaper so that the same budget buys more attempts. Echo-Bio studies the second problem—and finds that, in science, two answers are not equivalent merely because their prose looks equally convincing.</p>
 
 Suppose a laboratory has a fixed inference budget of **B**, and one propose–execute–evaluate cycle costs **C**. Ignoring fixed overhead, the budget can support roughly:
 
-<div class="formula-card formula-card-compact" role="img" aria-label="The number of recursive research rounds affordable under budget B is approximately the floor of B divided by the cost of one round.">
+<div class="formula-card formula-card-compact" aria-label="The number of recursive research rounds affordable under budget B is approximately the floor of B divided by the expected cost of one round.">
   <div class="formula-label">The budget argument</div>
-  <div class="formula-main">affordable research rounds ≈ ⌊ B ÷ C<sub>round</sub> ⌋</div>
+  <div class="formula-main">N<sub>rounds</sub>(B, h) ≈ floor( B / 𝔼[C<sub>round</sub>(h)] )</div>
 </div>
 
 This exposes two complementary directions for recursive self-improvement (RSI):
@@ -32,7 +30,9 @@ This exposes two complementary directions for recursive self-improvement (RSI):
 </table>
 </div>
 
-The second direction matters because lower cost compounds across a recursive loop. But it only helps if the cheaper run remains a **valid scientific run**. If the agent saves money by skipping an analysis, losing an artifact, or making a claim that cannot be traced to execution, then the extra iterations are illusory.
+The second direction matters because lower cost compounds across a recursive loop. But it only helps if the cheaper run remains a **valid scientific run**. Consider two agents that report the same differential-expression count. One links that number to executed code, a versioned input, and a persisted result table; the other merely states it in fluent prose. An answer-only score may treat them as equivalent. A scientific workflow cannot.
+
+If an agent saves money by skipping an analysis, losing an artifact, or making a claim that cannot be traced to execution, then the extra iterations are illusory.
 
 That is the motivation for Echo-Bio:
 
@@ -87,7 +87,20 @@ SoL-Pi solves its stated problem; the issue is **transfer**. Scientific harness 
 
 Our first candidate, **P1**, exposed this difference.
 
-Throughout this article, a **scientifically valid output** means a run that passes the frozen execution/artifact checks and deterministic scientific gate (called `G2` in the project ledger). A **hard violation** is a candidate-only protocol failure or scientifically unreviewable output that is absent from its paired baseline.
+Echo-Bio evaluates every settled trajectory through three nested views of the **same run**. No gate gets a fresh model attempt:
+
+<div class="table-scroll">
+<table class="result-table">
+  <thead><tr><th>Gate</th><th>What it asks</th><th>What it still cannot establish</th></tr></thead>
+  <tbody>
+    <tr><td><strong>G0: outcome-only</strong></td><td>Is the scored task outcome non-inferior, and is at least one raw efficiency measure better?</td><td>Whether the answer came from valid execution or recoverable evidence.</td></tr>
+    <tr><td><strong>G1: receipt-valid</strong></td><td>Does G0 pass, and are exit states, artifact locators, schemas, hashes, and replay records valid?</td><td>Whether material scientific claims are supported by the executed evidence.</td></tr>
+    <tr><td><strong>G2: evidence-constrained</strong></td><td>Does G1 pass, do scientific invariants hold, can every material claim be traced to typed executed evidence, and is the frozen scientific score non-inferior?</td><td>Universal biological truth or external replication.</td></tr>
+  </tbody>
+</table>
+</div>
+
+Throughout this article, a **scientifically valid output** is a run that passes G2. A **candidate-only hard violation** occurs when the candidate fails a frozen protocol or scientific-reviewability condition that its paired identity control passes. For example, if the candidate saves a call by finalizing before a required executed artifact exists, that is a candidate-only hard violation. A shared pre-treatment failure affecting both arms is not relabeled as a candidate defect.
 
 ### P1: a 14.08% cost saving that should not be promoted
 
@@ -110,8 +123,8 @@ P1 added a prompt-level rule asking the agent to work only on unresolved evidenc
 
 If we had ranked candidates only by cost, requests, or tokens, P1 would have won. But after dividing total cost by the number of scientifically valid outputs, the apparent 14.08% advantage shrank to **0.86%**. Most of the “saving” came from producing fewer acceptable results.
 
-<div class="formula-card formula-card-compact" role="img" aria-label="Cost per valid iteration equals total provider cost divided by the number of scientifically valid outputs.">
-  <div class="formula-main">cost per valid iteration = total provider cost ÷ number of scientifically valid outputs</div>
+<div class="formula-card formula-card-compact" aria-label="Cost per valid iteration equals total provider cost divided by the number of scientifically valid outputs.">
+  <div class="formula-main">cost per valid iteration = total provider cost / number of G2-valid outputs</div>
 </div>
 
 <figure class="post-figure post-figure-wide">
@@ -121,7 +134,7 @@ If we had ranked candidates only by cost, requests, or tokens, P1 would have won
 
 P1 turned the original motivation into a concrete research problem. Lower per-round cost is useful only when it increases the number of **valid** iterations:
 
-<div class="formula-card" role="img" aria-label="Choose the harness with the lowest expected round cost subject to scientific score and valid-output rate declining by no more than 0.03, no new hard violations, and complete claim-to-execution traceability.">
+<div class="formula-card" aria-label="Choose the harness with the lowest expected round cost subject to scientific score and valid-output rate declining by no more than 0.03, no new hard violations, and complete claim-to-execution traceability.">
   <div class="formula-label">Echo-Bio optimization problem</div>
   <div class="formula-main"><i>h</i><sup>★</sup> = arg min<sub><i>h</i> ∈ H</sub> 𝔼[ C<sub>round</sub>(<i>h</i>) ]</div>
   <div class="formula-rule"></div>
@@ -135,6 +148,15 @@ P1 turned the original motivation into a concrete research problem. Lower per-ro
 
 Here, **h** is one candidate harness and **H** is the preregistered candidate set. The optimization target is the expected cost of a research round. The remaining lines are feasibility constraints: a cheaper harness is not eligible if scientific capability, execution integrity, or evidence traceability deteriorates beyond the frozen boundary.
 
+The promotion rule is deliberately ordered:
+
+1. reject any candidate that introduces a new hard violation;
+2. reject any candidate whose scientific score or G2-valid rate falls by more than the frozen 0.03 non-inferiority margin;
+3. require every material claim to remain traceable to executed evidence;
+4. **only among the remaining feasible candidates**, rank efficiency and require at least the preregistered practical saving.
+
+In short: scientific equivalence defines the feasible region; cost chooses a winner only inside that region.
+
 ## Echo-Bio: optimize, verify, then promote
 
 Echo-Bio has three functional layers.
@@ -143,7 +165,7 @@ Echo-Bio has three functional layers.
 
 Both arms use the same provider interface, runtime, observer, artifacts, replay semantics, and hidden verifier:
 
-<div class="formula-card formula-card-compact" role="img" aria-label="The baseline is the Biomni research policy plus a common substrate and identity harness. The candidate is the same policy and substrate plus one treatment.">
+<div class="formula-card formula-card-compact" aria-label="The baseline is the Biomni research policy plus a common substrate and identity harness. The candidate is the same policy and substrate plus one treatment.">
   <div class="formula-main">Baseline = research policy + common substrate + identity harness</div>
   <div class="formula-main">Candidate = research policy + common substrate + one harness treatment</div>
   <div class="formula-rule"></div>
@@ -222,7 +244,7 @@ This separation is essential:
 - **P5 completion control:** Has the public execution contract been completed well enough to stop?
 - **Scientific verification:** Is the result executable, traceable, scientifically reviewable, and within the allowed claim boundary?
 
-## Public prospective experiment
+## P5: prospective evidence on a fixed public task bank
 
 We evaluated the frozen P5 mechanism on a fixed public search-dev bank. The schedule contained 20 paired tasks spanning scRNA, bulk RNA-seq, GWAS, and proteomics. One pair failed shared resource selection before either arm began; it was not retried or replaced. The primary analysis therefore contained 19 paired attempts.
 
@@ -264,9 +286,9 @@ The result is aggregate, not deterministic. Five P5 trajectories cost more than 
 
 It is not evidence that P5 saves cost on every run, proves scientific truth, generalizes to every biomedical task or model, or already improves a complete multi-generation RSI process.
 
-## A1: remove a whole provider call
+## A1: a separate successor that removes one provider call
 
-P5 reduced redundant work *inside* the research loop. We then asked whether a complete model call could be removed before that loop begins.
+P5 reduced redundant work *inside* the research loop. We then asked whether a complete model call could be removed before that loop begins. **A1 is a separate, bounded successor experiment; it is not folded into the P5 effect estimate.**
 
 A Biomni-style agent normally asks the provider to select tools and libraries from the available inventory. For task types whose required capability profile is already registered, this repeatedly pays a model to rediscover a bounded resource set. **A1** replaces that step with a deterministic registry compiler:
 
@@ -332,5 +354,5 @@ The core contribution is thus not “a cheaper agent” in isolation. It is a fo
 
 ### Suggested citation
 
-Li, H. “Echo-Bio: More Scientific Iterations per Budget.” 2026.<br>
+Li, H. “Echo-Bio: When Cost Minimization Fails for Biomedical Research Agents.” 2026.<br>
 [https://zimiao1025.github.io/blog/2026/10/27/echo-bio/](https://zimiao1025.github.io/blog/2026/10/27/echo-bio/)

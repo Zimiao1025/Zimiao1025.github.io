@@ -39,7 +39,7 @@
     <text x="625" y="425" fill="#182633" font-family="Georgia, serif" font-size="34">More precise prose</text>
     <text x="625" y="464" fill="#182633" font-family="Georgia, serif" font-size="34">about when to stop</text>
     <line x1="625" y1="500" x2="975" y2="500" stroke="#182633" stroke-opacity=".16"/>
-    <text x="625" y="551" fill="#2f4944" font-size="22" font-weight="800">G2 preserved</text>
+    <text x="625" y="551" fill="#2f4944" font-size="22" font-weight="800">Validity preserved</text>
     <text x="625" y="596" fill="#866550" font-size="25" font-weight="800">Cost +29.53%</text>
     <text x="625" y="635" fill="#866550" font-size="22" font-weight="800">More actions</text>
     <text x="625" y="700" fill="#666e72" font-size="18">A request for efficiency is</text>
@@ -50,8 +50,8 @@
     <text x="1138" y="464" fill="#f0efec" font-family="Georgia, serif" font-size="34">deterministic reducer</text>
     <line x1="1138" y1="500" x2="1488" y2="500" stroke="#e6e4df" stroke-opacity=".18"/>
     <text x="1138" y="551" fill="#a8846d" font-size="25" font-weight="800">Search-dev -21.96%</text>
-    <text x="1138" y="596" fill="#e6e4df" font-size="22" font-weight="800">Sealed holdout -8.04%</text>
-    <text x="1138" y="635" fill="#e6e4df" fill-opacity=".68" font-size="17">CI 1.25% to 15.17%</text>
+    <text x="1138" y="596" fill="#e6e4df" font-size="22" font-weight="800">Valid 18/19 vs 16/19</text>
+    <text x="1138" y="635" fill="#e6e4df" fill-opacity=".68" font-size="17">Requests -17.24%</text>
     <text x="1138" y="700" fill="#e6e4df" fill-opacity=".72" font-size="18">Completion moved from model</text>
     <text x="1138" y="730" fill="#e6e4df" fill-opacity=".72" font-size="18">prose into a control plane.</text>
   </g>

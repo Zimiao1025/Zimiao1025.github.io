@@ -3,9 +3,9 @@ layout: post
 title: "Echo-Bio: More Scientific Iterations per Budget"
 description: "Why efficient recursive self-improvement for biomedical research agents requires preserving executed evidence—not merely the final answer."
 date: 2026-10-27 09:00:00 +0800
-permalink: /blog/2026/10/27/cheapest-research-agent-was-the-wrong-winner/
+permalink: /blog/2026/10/27/echo-bio/
 tags: [Scientific Agents, AI for Science, Biomedical AI]
-reading_time: 15
+reading_time: 17
 image: /assets/images/blog/echo-bio/echo-bio-hero.svg
 ---
 
@@ -264,6 +264,40 @@ The result is aggregate, not deterministic. Five P5 trajectories cost more than 
 
 It is not evidence that P5 saves cost on every run, proves scientific truth, generalizes to every biomedical task or model, or already improves a complete multi-generation RSI process.
 
+## A1: remove a whole provider call
+
+P5 reduced redundant work *inside* the research loop. We then asked whether a complete model call could be removed before that loop begins.
+
+A Biomni-style agent normally asks the provider to select tools and libraries from the available inventory. For task types whose required capability profile is already registered, this repeatedly pays a model to rediscover a bounded resource set. **A1** replaces that step with a deterministic registry compiler:
+
+- input: the public task type, execution contract, and frozen resource inventory;
+- output: a content-addressed resource receipt consumed by the unchanged P5 research loop;
+- safety boundary: an unknown task profile, inventory drift, or unreplayable projection fails closed instead of guessing;
+- treatment isolation: provider/model, downstream prompts, P5 stopping control, scientific runtime, and evidence verifier remain shared between arms.
+
+<figure class="post-figure post-figure-wide">
+  <img src="{{ '/assets/images/blog/echo-bio/a1-resource-compiler.svg' | relative_url }}" alt="A1 replaces a paid provider resource-selection call with a deterministic registry compiler for registered task profiles before both arms enter the same P5 and evidence-constraint loop." width="1500" height="880" loading="lazy">
+  <figcaption>A1 removes a complete provider call for registered profiles; it does not compress or weaken the downstream scientific evidence.</figcaption>
+</figure>
+
+The final public search-dev analysis contained eight task identities and twelve paired trajectories across scRNA, bulk RNA-seq, GWAS, and proteomics. Tasks—not repeated trajectories—received equal weight in the task-cluster analysis.
+
+<div class="table-scroll">
+<table class="result-table">
+  <thead><tr><th>A1 endpoint</th><th>Registry compiler vs provider selector</th><th>Interpretation</th></tr></thead>
+  <tbody>
+    <tr><td>Full-pipeline provider cost</td><td class="metric-good">−38.901%<br><small>task-cluster 95% interval: 33.085% to 44.643%</small></td><td>Strong public search-dev efficiency signal for registered profiles.</td></tr>
+    <tr><td>Scientifically valid outputs</td><td>A1: 12/12<br>Provider-selector control: 10/12</td><td>No observed capability loss in this matrix.</td></tr>
+    <tr><td>Resource-selection provider calls</td><td class="metric-good">0 for A1</td><td>The targeted call was deterministically eliminated.</td></tr>
+    <tr><td>Total provider requests</td><td class="metric-good">−1.125 per task<br><small>95% interval: −1.313 to −0.938</small></td><td>The removed stage reduced complete-pipeline request count.</td></tr>
+    <tr><td>New A1 hard violations</td><td>0</td><td>Passed the public-matrix hard-failure gate.</td></tr>
+    <tr><td>Downstream-only cost</td><td>−3.373%<br><small>95% interval: −6.844% to 12.824%</small></td><td>Downstream-only non-inferiority was not established.</td></tr>
+  </tbody>
+</table>
+</div>
+
+This is a solid but intentionally bounded conclusion: **for registered task profiles under a frozen resource inventory, A1 eliminated the resource-selection provider call, preserved observed scientific validity, and reduced full-pipeline cost.** It does not establish open-domain resource selection, nor does it imply that downstream reasoning became 38.9% cheaper. The large full-pipeline effect includes the model call that A1 was designed to remove.
+
 ## What this changes about the RSI story
 
 Echo-Bio does not yet claim that more affordable rounds automatically produce a better final discovery. That requires a separate long-horizon experiment in which multiple agents receive the same total budget and are compared after different numbers of propose–execute–verify iterations.
@@ -277,6 +311,7 @@ What the present evidence establishes is the prerequisite for that experiment:
     <tr><td>Can a cost-only harness search select the wrong biomedical research agent?</td><td>Yes. P1 was 14.08% cheaper but crossed the scientific capability boundary and introduced five new hard violations.</td></tr>
     <tr><td>Does scientific research require a stronger equivalence criterion than final-answer success?</td><td>Yes. Promotion depends on execution receipts, artifact integrity, claim–evidence traceability, and scientific rubric checks.</td></tr>
     <tr><td>Can a deterministic harness mechanism reduce the cost of a valid research iteration?</td><td>P5 provides a positive public search-dev signal: −21.96% aggregate provider cost with 18/19 scientifically valid attempts versus 16/19 for identity.</td></tr>
+    <tr><td>Can a whole model-mediated stage be removed safely?</td><td>For registered profiles, A1 removed the resource-selection provider call and reduced full-pipeline cost by 38.901%, with scientifically valid outputs of 12/12 versus 10/12 for the provider-selector control.</td></tr>
     <tr><td>Has Echo-Bio proven end-to-end RSI improvement?</td><td>No. Equal-total-budget multi-round improvement remains the next causal experiment.</td></tr>
   </tbody>
 </table>
@@ -298,4 +333,4 @@ The core contribution is thus not “a cheaper agent” in isolation. It is a fo
 ### Suggested citation
 
 Li, H. “Echo-Bio: More Scientific Iterations per Budget.” 2026.<br>
-[https://zimiao1025.github.io/blog/2026/10/27/cheapest-research-agent-was-the-wrong-winner/](https://zimiao1025.github.io/blog/2026/10/27/cheapest-research-agent-was-the-wrong-winner/)
+[https://zimiao1025.github.io/blog/2026/10/27/echo-bio/](https://zimiao1025.github.io/blog/2026/10/27/echo-bio/)

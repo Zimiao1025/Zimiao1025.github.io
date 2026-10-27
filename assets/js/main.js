@@ -34,7 +34,7 @@ if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-mot
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px' });
+  }, { threshold: 0.01, rootMargin: '0px 0px -40px' });
   revealItems.forEach((item) => observer.observe(item));
 } else {
   revealItems.forEach((item) => item.classList.add('is-visible'));
@@ -43,4 +43,3 @@ if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-mot
 document.querySelectorAll('[data-current-year]').forEach((item) => {
   item.textContent = new Date().getFullYear();
 });
-

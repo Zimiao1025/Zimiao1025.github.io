@@ -15,6 +15,8 @@ image: /assets/images/blog/echo-bio/echo-bio-hero.svg
   <strong>In brief.</strong> Echo-Bio changes the <em>harness</em>—the controller around a fixed model that assembles context, invokes tools, records observations, and decides when to stop—not the biomedical model itself. A naive cost-saving prompt (P1) cut provider cost by 14.08% but also damaged scientific validity. A typed, evidence-aware stopping controller (P5) later reduced aggregate provider cost by 21.96% on 19 paired public development runs without an observed aggregate validity loss. A separate bounded mechanism (A1) removed one model-mediated resource-selection stage for registered task profiles. These are selected public search-dev results, not yet external or long-horizon RSI validation.
 </aside>
 
+**Code:** [Zimiao1025/Echo-Bio](https://github.com/Zimiao1025/Echo-Bio) — a sanitized, user-facing release with the runtime, evidence and trace infrastructure, verifier components, Biomni integration patch, and DeepSeek setup guide.
+
 Suppose a laboratory has a fixed inference budget of **B**, and one propose–execute–evaluate cycle costs **C**. Ignoring fixed overhead, the budget can support roughly:
 
 <div class="formula-card formula-card-compact" aria-label="The number of recursive research rounds affordable under budget B is approximately the floor of B divided by the expected cost of one round.">
@@ -382,9 +384,9 @@ The core contribution is thus not “a cheaper agent” in isolation. It is a fo
 
 ## Reproducibility and code-release boundary
 
-The P5 and A1 results in this article are bound to source tag `echo-bio-a1-task-diversity-stage-a-result-v1` (commit `abea8cb`). A sanitized `0.1.0rc1` release candidate is being prepared from that frozen source rather than from the later exploratory working tree.
+The P5 and A1 results in this article are bound to source tag `echo-bio-a1-task-diversity-stage-a-result-v1` (commit `abea8cb`). The sanitized, user-facing `0.1.0rc1` code release is available at [Zimiao1025/Echo-Bio](https://github.com/Zimiao1025/Echo-Bio). It was prepared from the frozen source rather than from the later exploratory working tree.
 
-The public package is intentionally narrower than the research workspace. It will include the runtime and verifier code needed to inspect the method, environment and replay instructions, and an initial provider guide for **DeepSeek V4.1 Flash** (`deepseek-flash`). It will exclude credentials, private or sealed evaluators, human-review material, authorization records, raw paid-response receipts, and internal reader/reviewer notes. Publication remains blocked until a human reviews the generated file manifest, secret-scan report, documentation, and license choice.
+The public package is intentionally narrower than the research workspace. It includes the user runtime, evidence and trace infrastructure, verifier components, the reviewed Biomni hook patch, and an initial provider guide for **DeepSeek V4.1 Flash** (`deepseek-flash`). It excludes experiment-reproduction scripts, benchmark corpora, credentials, private or sealed evaluators, human-review material, authorization records, raw paid-response receipts, and internal reader/reviewer notes.
 
 This release boundary matters scientifically as well as operationally: readers should be able to reproduce the public method without accidentally receiving the hidden evaluation material that defined the original experimental separation.
 
@@ -400,4 +402,4 @@ This release boundary matters scientifically as well as operationally: readers s
 ### Suggested citation
 
 Li, H. “Echo-Bio: When Cost Minimization Fails for Biomedical Research Agents.” 2026.<br>
-[https://zimiao1025.github.io/blog/2026/10/27/echo-bio/](https://zimiao1025.github.io/blog/2026/10/27/echo-bio/)
+[Article](https://zimiao1025.github.io/blog/2026/10/27/echo-bio/) · [Code](https://github.com/Zimiao1025/Echo-Bio)

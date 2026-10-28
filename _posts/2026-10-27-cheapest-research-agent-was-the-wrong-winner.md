@@ -105,7 +105,7 @@ For an ordinary language task, a final-answer score may be a reasonable approxim
 - the agent stopped before quality control or multiple-testing correction;
 - causal language goes beyond what the experiment supports.
 
-This concern is not unique to biomedicine. Other empirical sciences also depend on provenance and domain-specific checks. Biomedical workflows make the problem especially visible because heterogeneous datasets, preprocessing choices, statistical corrections, and causal wording can all change the scientific meaning of an otherwise fluent answer. Echo-Bio does not claim a universal science verifier: **the principle may transfer, but the checks must be defined for each domain.**
+Biomedical workflows make this problem especially visible because heterogeneous datasets, preprocessing choices, statistical corrections, and causal wording can all change the scientific meaning of an otherwise fluent answer. Echo-Bio handles that complexity by separating stable checks shared by every run from task-specific checks that define what evidence a particular analysis must produce.
 
 <div class="term-grid" aria-label="Key terms">
   <div><strong>Evidence contract</strong><span>The analyses, artifacts, and provenance that must exist before a result can count.</span></div>
@@ -113,11 +113,36 @@ This concern is not unique to biomedicine. Other empirical sciences also depend 
   <div><strong>Accepted result</strong><span>A completed run that passes the operational contract and the frozen scientific review.</span></div>
 </div>
 
-We therefore built a verifier that asks four progressively harder questions:
+To make that boundary operational, Echo-Bio evaluates every run through four distinct layers:
+
+<div class="verifier-stack" aria-label="Four-layer scientific verifier architecture">
+  <div class="verifier-layer">
+    <span class="verifier-index">01</span>
+    <div class="verifier-copy"><strong>Execution integrity</strong><p>Can the run and its outputs be recovered as recorded? This layer checks execution status, receipts, artifact hashes, schemas, and resolvable locations.</p></div>
+    <span class="verifier-scope">Shared kernel</span>
+  </div>
+  <div class="verifier-layer">
+    <span class="verifier-index">02</span>
+    <div class="verifier-copy"><strong>Scientific completion</strong><p>Did the agent produce the evidence that this kind of task requires? The answer depends on a registered domain contract, such as required quality-control fields or corrected statistical results.</p></div>
+    <span class="verifier-scope">Task contract</span>
+  </div>
+  <div class="verifier-layer">
+    <span class="verifier-index">03</span>
+    <div class="verifier-copy"><strong>Claim–evidence support</strong><p>Does every material claim point to typed evidence produced by the recorded execution? This layer prevents the final answer from inventing a number, silently transforming it, or overstating what it means.</p></div>
+    <span class="verifier-scope">Kernel + contract</span>
+  </div>
+  <div class="verifier-layer">
+    <span class="verifier-index">04</span>
+    <div class="verifier-copy"><strong>Scientific review</strong><p>Are the method choice, limitations, and causal language acceptable under the frozen rubric? Cases that deterministic checks cannot settle can be routed to expert review.</p></div>
+    <span class="verifier-scope">Rubric + review</span>
+  </div>
+</div>
+
+The layers are cumulative, not four interchangeable scores. A polished answer cannot compensate for a missing execution record. A valid artifact cannot compensate for an unsupported claim. A run counts as accepted only when it clears every required layer.
 
 <div class="table-scroll">
 <table class="evidence-table">
-  <caption>The verifier turns “still scientifically usable” into four inspectable questions.</caption>
+  <caption>Each layer turns “still scientifically usable” into an inspectable question.</caption>
   <thead><tr><th>Question</th><th>What is checked</th><th>Example</th></tr></thead>
   <tbody>
     <tr><td><strong>Did the analysis run?</strong></td><td>Execution status, artifact hashes, schemas, and resolvable locations.</td><td>The differential-expression table exists and can be reopened.</td></tr>
@@ -128,7 +153,11 @@ We therefore built a verifier that asks four progressively harder questions:
 </table>
 </div>
 
-The provenance path is explicit:
+The architecture is extensible because the stable verification machinery is separated from the scientific definition of a task. The <strong>shared kernel</strong> handles receipts, artifact integrity, location resolution, replay, and claim-to-evidence links. A <strong>registered task package</strong> declares the required evidence fields, domain checks, and scientific rubric for a task type.
+
+Supporting a new assay or analysis therefore means registering a new package against the same verifier interface—not adding special cases throughout the research loop. If no matching package exists, verification stops rather than silently treating the task as generic.
+
+Across all four layers, the provenance path remains explicit:
 
 <div class="provenance-chain" aria-label="Material claim to executed evidence provenance chain">
   <span>Claim</span><i>→</i><span>Typed result</span><i>→</i><span>Saved artifact</span><i>→</i><span>Execution record</span><i>→</i><span>Code + data version</span>

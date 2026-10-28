@@ -20,7 +20,7 @@
     <text x="116" y="316" fill="#182633" font-family="Georgia, serif" font-size="31">Same task</text>
     <text x="116" y="354" fill="#182633" font-family="Georgia, serif" font-size="31">Same data</text>
     <text x="116" y="392" fill="#182633" font-family="Georgia, serif" font-size="31">Same schedule</text>
-    <text x="116" y="430" fill="#666e72" font-size="17">Interleaved paired arms</text>
+    <text x="116" y="430" fill="#666e72" font-size="17">Interleaved paired runs</text>
 
     <path d="M374 340H488" stroke="#61788c" stroke-width="4" marker-end="url(#arrow)"/>
 

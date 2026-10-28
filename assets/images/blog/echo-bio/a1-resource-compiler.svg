@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="880" viewBox="0 0 1500 880" role="img" aria-labelledby="title desc">
-  <title id="title">A1 removes a resource-selection provider call</title>
-  <desc id="desc">The provider selector uses one paid model call before the shared P5 and evidence-constraint loop. The registry compiler uses the public task type and frozen inventory to produce the same bounded receipt with zero provider calls.</desc>
+  <title id="title">A registry compiler removes a resource-selection model call</title>
+  <desc id="desc">The model selector uses one paid call before the shared evidence-constrained research loop. The registry compiler uses the public task type and frozen inventory to produce the same bounded receipt with zero model calls.</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
       <path d="M0 0 10 5 0 10Z" fill="#61788c"/>
@@ -11,7 +11,7 @@
   </defs>
   <rect width="1500" height="880" rx="30" fill="#f0efec"/>
   <text x="78" y="84" fill="#182633" font-family="Georgia, serif" font-size="48">Remove a whole call—not a few fields</text>
-  <text x="80" y="128" fill="#666e72" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="19">A1 compiles registered capabilities locally and leaves the downstream research loop unchanged.</text>
+  <text x="80" y="128" fill="#666e72" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="19">Registered capabilities are compiled locally, leaving the downstream research loop unchanged.</text>
 
   <g filter="url(#shadow)" font-family="Avenir Next, Helvetica, Arial, sans-serif">
     <rect x="78" y="206" width="600" height="492" rx="30" fill="#e6e4df"/>
@@ -33,7 +33,7 @@
     <text x="378" y="553" text-anchor="middle" fill="#e6e4df" font-size="14">then shared loop</text>
     <text x="378" y="642" text-anchor="middle" fill="#866550" font-family="Georgia, serif" font-size="30">Paid rediscovery</text>
 
-    <text x="866" y="256" fill="#a8846d" font-size="14" font-weight="800" letter-spacing="3">A1 · REGISTRY COMPILER</text>
+    <text x="866" y="256" fill="#a8846d" font-size="14" font-weight="800" letter-spacing="3">REGISTRY COMPILER</text>
     <rect x="870" y="310" width="210" height="94" rx="18" fill="#61788c"/>
     <text x="975" y="348" text-anchor="middle" fill="#f0efec" font-size="15" font-weight="800">TASK TYPE</text>
     <text x="975" y="377" text-anchor="middle" fill="#e6e4df" font-size="14">public contract</text>
@@ -49,7 +49,7 @@
   </g>
 
   <rect x="284" y="742" width="932" height="76" rx="38" fill="#2f4944"/>
-  <text x="750" y="776" text-anchor="middle" fill="#a8846d" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="3">BOTH ARMS ENTER THE SAME P5 + EVIDENCE-CONSTRAINT LOOP</text>
+  <text x="750" y="776" text-anchor="middle" fill="#a8846d" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="14" font-weight="800" letter-spacing="2">BOTH VERSIONS ENTER THE SAME EVIDENCE-CONSTRAINED RESEARCH LOOP</text>
   <text x="750" y="802" text-anchor="middle" fill="#e6e4df" fill-opacity=".72" font-family="Avenir Next, Helvetica, Arial, sans-serif" font-size="15">Unknown profile or inventory drift; fail closed to the provider path</text>
   <path d="M378 578V720" fill="none" stroke="#61788c" stroke-width="4" marker-end="url(#arrow)"/>
   <path d="M1122 578V720" fill="none" stroke="#61788c" stroke-width="4" marker-end="url(#arrow)"/>

@@ -5,401 +5,279 @@ description: "Evidence-Constrained Harness Optimization for Efficient Biomedical
 date: 2026-10-27 09:00:00 +0800
 permalink: /blog/2026/10/27/echo-bio/
 tags: [Scientific Agents, AI for Science, Biomedical AI]
-reading_time: 20
+reading_time: 14
 image: /assets/images/blog/echo-bio/echo-bio-hero.svg
 ---
 
-<p class="post-lede">A recursive research agent can improve in two ways: make every iteration better, or make an equally useful iteration cheaper so that the same budget buys more attempts. Echo-Bio studies the second problem—and finds that, in science, two answers are not equivalent merely because their prose looks equally convincing.</p>
+<p class="post-lede">A cheaper research agent is useful only if it still does the research. Echo-Bio began as an attempt to reduce the cost of a biomedical agent—and became a study of what must never be optimized away.</p>
 
-<aside class="reader-note">
-  <strong>In brief.</strong> Echo-Bio changes the <em>harness</em>—the controller around a fixed model that assembles context, invokes tools, records observations, and decides when to stop—not the biomedical model itself. A naive cost-saving prompt (P1) cut provider cost by 14.08% but also damaged scientific validity. A typed, evidence-aware stopping controller (P5) later reduced aggregate provider cost by 21.96% on 19 paired public development runs without an observed aggregate validity loss. A separate bounded mechanism (A1) removed one model-mediated resource-selection stage for registered task profiles. These are selected public search-dev results, not yet external or long-horizon RSI validation.
-</aside>
+Imagine asking two agents to compare treatment and control cells. Both report the same number of differentially expressed genes. One number comes from executed code, a versioned count matrix, a saved result table, and a multiple-testing procedure that can be inspected. The other appears only in polished prose.
 
-**Code:** [Zimiao1025/Echo-Bio](https://github.com/Zimiao1025/Echo-Bio) — a sanitized, user-facing release with the runtime, evidence and trace infrastructure, verifier components, Biomni integration patch, and DeepSeek setup guide.
+They may look equally convincing in a chat window. They are not equally useful scientific results.
 
-Suppose a laboratory has a fixed inference budget of **B**, and one propose–execute–evaluate cycle costs **C**. Ignoring fixed overhead, the budget can support roughly:
+This distinction matters when we try to make research agents more efficient. A self-improving research system has two levers: make each cycle better, or make an equally useful cycle cheaper so the same budget can buy more cycles. Echo-Bio studies the second lever. A less expensive cycle could let an agent test more hypotheses, recover from more failures, or run more rounds of self-improvement—but only if the cheaper cycles remain scientifically usable.
 
-<div class="formula-card formula-card-compact" aria-label="The number of recursive research rounds affordable under budget B is approximately the floor of B divided by the expected cost of one round.">
-  <div class="formula-label">The budget argument</div>
-  <div class="formula-main">N<sub>rounds</sub>(B, h) ≈ floor( B / 𝔼[C<sub>round</sub>(h)] )</div>
+<div class="formula-card formula-card-compact" aria-label="The number of useful research rounds is approximately the total budget divided by the cost of one verifier-accepted research round.">
+  <div class="formula-label">The quantity we actually care about</div>
+  <div class="formula-main">useful research rounds ≈ total budget / cost of one accepted research round</div>
 </div>
 
-This exposes two complementary directions for recursive self-improvement (RSI):
+The word **accepted** is doing most of the work here.
 
-<div class="table-scroll">
-<table class="result-table">
-  <thead><tr><th>RSI direction</th><th>Question</th><th>Representative idea</th></tr></thead>
-  <tbody>
-    <tr><td>Improve each round</td><td>Can a better model or harness produce a stronger research result per iteration?</td><td>ScienceBuddy couples inner harness evolution with outer model learning; STELLA accumulates tools and reasoning templates.</td></tr>
-    <tr><td>Buy more valid rounds</td><td>Can the same model produce an equivalent, scientifically valid result with fewer calls, tokens, actions, or cost?</td><td>Echo-Bio isolates this efficiency problem for biomedical research agents.</td></tr>
-  </tbody>
-</table>
-</div>
+**Echo-Bio asks one question:** can we make a biomedical research agent cheaper without losing the execution, artifacts, and evidence that make its answer scientifically reviewable?
 
-The first direction is important and complementary, but deliberately outside this study: Echo-Bio does not claim to make the model scientifically smarter within one round. It asks whether a fixed research policy can complete an equally valid round with less avoidable harness overhead.
-
-The second direction matters because lower cost compounds across a recursive loop. But it only helps if the cheaper run remains a **valid scientific run**. Consider two agents that report the same differential-expression count. One links that number to executed code, a versioned input, and a persisted result table; the other merely states it in fluent prose. An answer-only score may treat them as equivalent. A scientific workflow cannot.
-
-If an agent saves money by skipping an analysis, losing an artifact, or making a claim that cannot be traced to execution, then the extra iterations are illusory.
-
-That is the motivation for Echo-Bio:
-
-> Reduce the cost of one biomedical research iteration without reducing the scientific capability and executed evidence delivered by that iteration.
+**Code:** [Zimiao1025/Echo-Bio](https://github.com/Zimiao1025/Echo-Bio)
 
 <figure class="post-figure post-figure-wide post-hero-art">
   <img src="{{ '/assets/images/blog/echo-bio/echo-bio-hero.svg' | relative_url }}" alt="Echo-Bio surrounds a fixed biomedical research policy with planning, execution, evidence, verification, and harness evolution." width="1600" height="900">
-  <figcaption>Echo-Bio keeps the research policy fixed and optimizes the harness around it: context, actions, observations, evidence state, and stopping control.</figcaption>
+  <figcaption>Echo-Bio keeps the model and scientific task fixed, then studies the machinery around them: context, actions, observations, evidence, and stopping.</figcaption>
 </figure>
 
-## The subproblem Echo-Bio isolates
+## Why optimize the harness at all?
 
-Consider a [Biomni](https://www.biorxiv.org/content/10.1101/2025.05.30.656746v1)-style research loop. Biomni is a general-purpose biomedical agent that lets a language model select scientific resources, write and execute analysis code, inspect observations, and synthesize an answer:
+A system such as [Biomni](https://www.biorxiv.org/content/10.1101/2025.05.30.656746v1) is more than a language model answering a question. The model operates inside a **harness**: software that chooses what context the model sees, exposes tools and data, executes code, returns observations, stores artifacts, and decides whether the loop should continue.
 
-1. interpret a biomedical question;
-2. select tools, libraries, and data resources;
-3. plan and execute analyses;
-4. observe results and decide whether more work is needed;
-5. produce a scientific answer with supporting artifacts.
+That surrounding machinery can be expensive. A research loop may repeatedly send the same context, ask the model to rediscover an already known tool set, inspect the same output twice, or continue acting after the required analysis is complete. None of these costs necessarily reflects deeper scientific reasoning.
 
-Echo-Bio does not train a new biomedical model. It asks whether the **harness** around the same research policy can execute this loop more efficiently. Here, “harness” has a concrete operational meaning: the prompt and context assembly, tool/action interface, observation representation, execution controller, and stopping logic surrounding the model.
+Inspired by [SoL-Pi](https://nvlabs.github.io/SoL-Pi/), we asked whether some of this harness overhead could be removed while keeping the underlying model and task unchanged. The transfer to biomedical research, however, introduced a complication: success is not captured by a final answer alone.
 
-<div class="table-scroll">
-<table class="result-table experiment-control-table">
-  <thead><tr><th>Held fixed in both arms</th><th>Allowed to change</th></tr></thead>
-  <tbody>
-    <tr>
-      <td>
-        <ul class="table-cell-list">
-          <li>Biomedical research policy and base model</li>
-          <li>Provider, thinking policy, request budget, and price snapshot</li>
-          <li>Scientific runtime, dependencies, data mounts, and execution limits</li>
-          <li>Task bytes and pre-treatment resource context</li>
-          <li>Observer, execution receipts, artifact store, and replay rules</li>
-          <li>Hidden scientific verifier and rubric</li>
-        </ul>
-      </td>
-      <td class="treatment-cell"><strong>One registered harness mechanism</strong><span>For example, how completion is represented and when the research loop is allowed to stop.</span></td>
-    </tr>
-  </tbody>
-</table>
-</div>
+## Our first shortcut was cheaper—and worse
 
-The baseline is therefore not an uninstrumented installation of Biomni. Both arms receive the same measurement and verification substrate. The baseline uses an **identity harness**; the candidate adds exactly one Echo-Bio optimization. This lets a paired difference be attributed to the harness rather than to a different model, runtime, or evaluator.
+Our first strategy was deliberately simple. We told the agent to focus only on unresolved evidence requirements and stop once the evidence looked complete. It resembled the kind of prompt-level harness optimization that often works in tasks with a direct outcome score.
 
-## Why SoL-Pi cannot be copied directly into scientific research
+We compared it with the original loop using six task identities—two each in scRNA-seq, bulk RNA-seq, and GWAS—and repeated every matched comparison three times. The same model, provider, data, scientific environment, and request budget were used in both versions.
 
-[SoL-Pi](https://arxiv.org/abs/2609.20519) provides a compelling demonstration of the second RSI direction. On EdgeBench, it reports performance comparable to Pi while reducing recorded token traffic by 44.7–49.0% and API cost by roughly one third. Its broader lesson is that a fixed model can become much more efficient when action execution, context, observations, and delegated work are optimized at the harness level.
-
-Echo-Bio starts from that lesson, but biomedical research changes what counts as an “equivalent result.” A coding task may often have an executable test or a directly scored outcome. A scientific answer can look correct even when:
-
-- the reported statistic was never produced by executed code;
-- the analysis used the wrong sample partition or normalization;
-- an output file exists but cannot be linked to the claim;
-- a model stopped before producing required evidence;
-- causal language is stronger than the experiment supports.
-
-SoL-Pi solves its stated problem; the issue is **transfer**. Scientific harness optimization needs a capability definition that includes the result, the execution, and the claim–evidence relationship.
-
-Our first candidate, **P1**, exposed this difference.
-
-Echo-Bio evaluates every settled trajectory through three nested views of the **same run**. No gate gets a fresh model attempt:
+At first glance, the strategy looked successful:
 
 <div class="table-scroll">
 <table class="result-table">
-  <thead><tr><th>Gate</th><th>What it asks</th><th>What it still cannot establish</th></tr></thead>
+  <thead><tr><th>What changed per scheduled task</th><th>Original loop</th><th>Cost-saving prompt</th><th>Difference</th></tr></thead>
   <tbody>
-    <tr><td><strong>G0: outcome-only</strong></td><td>Is the scored task outcome non-inferior, and is at least one raw efficiency measure better?</td><td>Whether the answer came from valid execution or recoverable evidence.</td></tr>
-    <tr><td><strong>G1: receipt-valid</strong></td><td>Does G0 pass, and are exit states, artifact locators, schemas, hashes, and replay records valid?</td><td>Whether material scientific claims are supported by the executed evidence.</td></tr>
-    <tr><td><strong>G2: evidence-constrained</strong></td><td>Does G1 pass, do scientific invariants hold, can every material claim be traced to typed executed evidence, and is the frozen scientific score non-inferior?</td><td>Universal biological truth or external replication.</td></tr>
-  </tbody>
-</table>
-</div>
-
-Throughout this article, a **scientifically valid output** is a run that passes G2. A **candidate-only hard violation** occurs when the candidate fails a frozen protocol or scientific-reviewability condition that its paired identity control passes. For example, if the candidate saves a call by finalizing before a required executed artifact exists, that is a candidate-only hard violation. A shared pre-treatment failure affecting both arms is not relabeled as a candidate defect.
-
-### P1 asks: is a cheaper trajectory necessarily an equivalent one?
-
-P1 added a prompt-level rule asking the agent to work only on unresolved evidence requirements and stop when the evidence appeared complete. We tested it against the identity harness on six task identities—two each in scRNA, bulk RNA-seq, and GWAS—with three paired repeats per task.
-
-<div class="table-scroll">
-<table class="result-table">
-  <thead><tr><th>Endpoint per scheduled task</th><th>Identity harness</th><th>P1</th><th>P1 change</th></tr></thead>
-  <tbody>
-    <tr><td>Settled provider cost</td><td>¥0.070735</td><td>¥0.060776</td><td class="metric-good">−14.08%</td></tr>
-    <tr><td>Provider requests</td><td>5.111</td><td>4.333</td><td class="metric-good">−15.22%</td></tr>
+    <tr><td>Provider cost</td><td>¥0.070735</td><td>¥0.060776</td><td class="metric-good">−14.08%</td></tr>
+    <tr><td>Model requests</td><td>5.111</td><td>4.333</td><td class="metric-good">−15.22%</td></tr>
     <tr><td>Input tokens</td><td>28,398.9</td><td>24,711.7</td><td class="metric-good">−12.98%</td></tr>
     <tr><td>Output tokens</td><td>1,742.1</td><td>1,419.1</td><td class="metric-good">−18.54%</td></tr>
-    <tr><td>Scientific rubric score</td><td>0.944</td><td>0.778</td><td class="metric-bad">−0.167</td></tr>
-    <tr><td>Scientifically valid output rate</td><td>0.833</td><td>0.722</td><td class="metric-bad">−0.111</td></tr>
-    <tr><td>New candidate-only hard violations</td><td>—</td><td>5</td><td class="metric-bad">Reject</td></tr>
+    <tr><td>Scientific review score</td><td>0.944</td><td>0.778</td><td class="metric-bad">−0.167</td></tr>
+    <tr><td>Accepted results</td><td>15/18 (83.3%)</td><td>13/18 (72.2%)</td><td class="metric-bad">−11.1 points</td></tr>
+    <tr><td>New critical failures</td><td>—</td><td>5</td><td class="metric-bad">Rejected</td></tr>
   </tbody>
 </table>
 </div>
 
-If we had ranked candidates only by cost, requests, or tokens, P1 would have won. But after dividing total cost by the number of scientifically valid outputs, the apparent 14.08% advantage shrank to **0.86%**. Most of the “saving” came from producing fewer acceptable results.
+The agent made fewer calls and spent fewer tokens, but it also produced fewer results that met the scientific requirements. Some runs stopped before required evidence existed. Others produced outputs that could not be traced cleanly back to execution.
 
-<div class="formula-card formula-card-compact" aria-label="Cost per valid iteration equals total provider cost divided by the number of scientifically valid outputs.">
-  <div class="formula-main">cost per valid iteration = total provider cost / number of G2-valid outputs</div>
-</div>
+Once we divided total cost by the number of accepted results, the apparent 14.08% saving shrank to **0.86%**. Most of the saving came from doing less acceptable work.
 
 <figure class="post-figure post-figure-wide">
-  <img src="{{ '/assets/images/blog/echo-bio/false-winner-frontier.svg' | relative_url }}" alt="A capability-versus-cost diagram showing P1 below the scientific capability floor despite being cheaper." width="1440" height="900" loading="lazy">
-  <figcaption>P1 is the cheapest wrong winner: it crosses the cost target by falling below the scientific capability floor.</figcaption>
+  <img src="{{ '/assets/images/blog/echo-bio/false-winner-frontier.svg' | relative_url }}" alt="A capability-versus-cost diagram showing that the cheapest shortcut falls below the scientific capability floor." width="1440" height="900" loading="lazy">
+  <figcaption>The cheapest version was the wrong winner: it crossed the cost target by falling below the scientific capability floor.</figcaption>
 </figure>
 
-P1 turned the original motivation into a concrete research problem. Lower per-round cost is useful only when it increases the number of **valid** iterations:
+This failure changed the project. We were no longer asking, “How can we make Biomni cheaper?” We were asking:
 
-<div class="formula-card" aria-label="Choose the harness with the lowest expected round cost subject to scientific score and valid-output rate declining by no more than 0.03, no new hard violations, and complete claim-to-execution traceability.">
-  <div class="formula-label">Echo-Bio optimization problem</div>
-  <div class="formula-main"><i>h</i><sup>★</sup> = arg min<sub><i>h</i> ∈ H</sub> 𝔼[ C<sub>round</sub>(<i>h</i>) ]</div>
+> What does it mean for two biomedical research trajectories to be equivalent enough that cost is a fair comparison?
+
+## Scientific efficiency needs an evidence constraint
+
+For an ordinary language task, a final-answer score may be a reasonable approximation of success. For a biomedical research agent, a result can sound correct while the trajectory underneath it is unusable:
+
+- the statistic was never produced by executed code;
+- the wrong samples or normalization were used;
+- a result file exists, but the final claim does not point to it;
+- the agent stopped before quality control or multiple-testing correction;
+- causal language goes beyond what the experiment supports.
+
+We therefore built a verifier that asks four progressively harder questions:
+
+<div class="table-scroll">
+<table class="evidence-table">
+  <thead><tr><th>Question</th><th>What is checked</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Did the analysis run?</strong></td><td>Execution status, artifact hashes, schemas, and resolvable locations.</td><td>The differential-expression table exists and can be reopened.</td></tr>
+    <tr><td><strong>Was the required analysis completed?</strong></td><td>Task- and domain-specific scientific requirements.</td><td>For scRNA-seq, donor structure is preserved and multiple testing is handled.</td></tr>
+    <tr><td><strong>Do the claims follow from the results?</strong></td><td>Every material quantitative claim is linked to typed executed evidence.</td><td>A reported gene count equals the value stored in the executed result.</td></tr>
+    <tr><td><strong>Is the answer scientifically reviewable?</strong></td><td>Method choice, limitations, and causal language are checked against a frozen rubric or sent to expert review.</td><td>An observational association is not presented as a demonstrated mechanism.</td></tr>
+  </tbody>
+</table>
+</div>
+
+The provenance path is explicit:
+
+<div class="provenance-chain" aria-label="Material claim to executed evidence provenance chain">
+  <span>Claim</span><i>→</i><span>Typed result</span><i>→</i><span>Saved artifact</span><i>→</i><span>Execution record</span><i>→</i><span>Code + data version</span>
+</div>
+
+This verifier does **not** prove biological truth. It cannot establish that a finding will replicate in another cohort, that a cell annotation is unquestionably correct, or that an experiment rules out every confounder. It defines a narrower and testable boundary: the work ran, the required evidence exists, the answer is supported by that evidence, and the scientific claims stay within the allowed scope.
+
+Only after a result clears that boundary do we compare efficiency.
+
+<div class="formula-card" aria-label="Choose the least expensive harness only among those that preserve scientific score, accepted result rate, critical safety constraints, and claim-to-evidence traceability.">
+  <div class="formula-label">Evidence-constrained harness optimization</div>
+  <div class="formula-main">choose the least expensive harness that still produces an accepted research result</div>
   <div class="formula-rule"></div>
   <div class="formula-constraints">
-    <span>scientific-score change ≥ −0.03</span>
-    <span>scientifically-valid-output-rate change ≥ −0.03</span>
-    <span>new candidate-only hard violations = 0</span>
+    <span>scientific score does not fall beyond the fixed margin</span>
+    <span>accepted-result rate does not fall beyond the fixed margin</span>
+    <span>no new critical failure is introduced</span>
     <span>material claims remain traceable to executed evidence</span>
   </div>
 </div>
 
-Here, **h** is one candidate harness and **H** is the preregistered candidate set. The optimization target is the expected cost of a research round. The remaining lines are feasibility constraints: a cheaper harness is not eligible if scientific capability, execution integrity, or evidence traceability deteriorates beyond the frozen boundary.
+In our experiments, the allowable decline for the two quantitative scientific measures was fixed at 0.03 before the comparison. Cost could choose a winner only among methods that first met these conditions.
 
-The promotion rule is deliberately ordered:
+## Keeping the comparison honest
 
-1. reject any candidate that introduces a new hard violation;
-2. reject any candidate whose scientific score or G2-valid rate falls by more than the frozen 0.03 non-inferiority margin;
-3. require every material claim to remain traceable to executed evidence;
-4. **only among the remaining feasible candidates**, rank efficiency and require at least the preregistered practical saving.
+The verifier itself is not an efficiency improvement. Both versions of the agent receive exactly the same scientific checking and measurement infrastructure. We also keep the model, provider policy, task data, runtime, resource inventory, and execution limits fixed. The only intended difference is one harness change.
 
-In short: scientific equivalence defines the feasible region; cost chooses a winner only inside that region.
-
-## Echo-Bio: optimize, verify, then promote
-
-Echo-Bio has three functional layers.
-
-### 1. A common evaluation substrate
-
-Both arms use the same provider interface, runtime, observer, artifacts, replay semantics, and hidden verifier:
-
-<div class="formula-card formula-card-compact" aria-label="The baseline is the Biomni research policy plus a common substrate and identity harness. The candidate is the same policy and substrate plus one treatment.">
-  <div class="formula-main">Baseline = research policy + common substrate + identity harness</div>
-  <div class="formula-main">Candidate = research policy + common substrate + one harness treatment</div>
-  <div class="formula-rule"></div>
-  <div class="formula-main">Harness effect = paired candidate outcome − paired baseline outcome</div>
-</div>
+Here, the **original loop** means the Biomni-style research behavior running on this common evaluation setup. It does not mean an unobserved vanilla installation: execution and evidence are recorded in both versions so that the comparison can be audited.
 
 <figure class="post-figure post-figure-wide">
-  <img src="{{ '/assets/images/blog/echo-bio/common-evaluation-substrate.svg' | relative_url }}" alt="A paired experiment in which baseline and candidate share provider, model, runtime, observer, replay, and verifier, while differing only in one harness treatment." width="1440" height="900" loading="lazy">
-  <figcaption>The shared substrate makes the treatment identifiable. It is not counted as an Echo-Bio efficiency gain.</figcaption>
+  <img src="{{ '/assets/images/blog/echo-bio/common-evaluation-substrate.svg' | relative_url }}" alt="A paired comparison in which the original and modified agents share the model, runtime, observer, replay rules, and verifier." width="1440" height="900" loading="lazy">
+  <figcaption>The verifier is a shared scientific floor. It prevents a cheaper but incomplete trajectory from being mistaken for progress.</figcaption>
 </figure>
 
-For a concrete scRNA task, both arms might receive the same count matrix and question—say, identify cell-type-specific differential expression between two conditions. Both must execute code in the same environment, persist the same classes of QC and result artifacts, and link the final claims back to those artifacts. The candidate may change how the loop represents “what remains to be done,” but it cannot change the data, scientific dependencies, model, execution budget, or grading rules. That is why a difference in cost can be interpreted as a harness effect rather than an easier task or a more permissive evaluator.
+This separation matters. If only the modified agent received extra checking, its cost would be unfairly inflated. If neither version were checked, an incomplete run could win. The fair comparison is:
 
-### 2. An evidence-aware verifier
+<div class="formula-card formula-card-compact">
+  <div class="formula-main">same research agent + same verifier + one different harness mechanism</div>
+</div>
 
-Scientific validity is decomposed into checks with different authority:
+## Letting trajectories tell us where the waste was
+
+We did not jump directly from the failed prompt to the final mechanisms. We analyzed successful and failed trajectories to find where calls, actions, and context accumulated.
+
+The initial search produced **12 candidate directions**: seven came from trace analysis, three were inspired by SoL-Pi, and two were human-proposed. Ten were implemented as isolated candidates. Ideas included lossless observation storage, adaptive observation projection, execution reuse, typed context compaction, diagnostic-log reduction, plan checkpoints, and evidence-aware stopping.
+
+Most did not become positive results. That was useful information.
+
+For example, a narrower natural-language stopping instruction preserved scientific acceptability in a small prospective test, but increased cost by **29.53%**. The model started closing gaps one at a time, reconfirming finished work, and explaining that it was done. Every extra turn then returned in later prompts, making the context larger.
+
+Several later compression ideas also failed to clear their preregistered practical threshold:
 
 <div class="table-scroll">
-<table class="evidence-table">
-  <thead><tr><th>Level</th><th>Question</th><th>Example</th></tr></thead>
+<table class="result-table">
+  <thead><tr><th>Idea tested after the main improvement</th><th>What we learned</th></tr></thead>
   <tbody>
-    <tr><td><span class="level-chip">L0</span></td><td>Did execution and persistence succeed?</td><td>Exit state, artifact hash, schema, and locator are valid.</td></tr>
-    <tr><td><span class="level-chip">L1</span></td><td>Did domain-specific structural invariants hold?</td><td>For scRNA: required QC fields exist, failed cells and doublets are handled, donor/sample structure is preserved, and multiple-testing correction can be recomputed.</td></tr>
-    <tr><td><span class="level-chip">L2</span></td><td>Does a material claim follow from linked evidence?</td><td>A reported count or effect equals a typed value produced by execution.</td></tr>
-    <tr><td><span class="level-chip">L3</span></td><td>Does the result satisfy the scientific rubric?</td><td>Method choice, limitations, and causal language satisfy the frozen rubric or are routed for expert review.</td></tr>
+    <tr><td>Replace repeated observations with exact recall handles</td><td>Evidence remained recoverable, but estimated saving was 4.57%—below the 5% threshold.</td></tr>
+    <tr><td>Compress the final evidence pack</td><td>A scientifically complete pack already contained most of the necessary bytes; saving was only 0.12%.</td></tr>
+    <tr><td>Attach claim-to-evidence locations to the final answer</td><td>Useful for provenance, but not an efficiency win: output expanded and cost increased by 9.96%.</td></tr>
+    <tr><td>Replace history with typed state and exact aliases</td><td>The state metadata consumed most of the removed context; net saving was 2.87%.</td></tr>
   </tbody>
 </table>
 </div>
 
-The evidence path is explicit:
+The recurring lesson was simple: asking the model to *talk about* being efficient often creates more text. Safe compression also has a limit because scientific evidence cannot simply disappear.
 
-<div class="provenance-chain" aria-label="Material claim to executed evidence provenance chain">
-  <span>Material claim</span><i>→</i><span>Typed evidence</span><i>→</i><span>Artifact locator</span><i>→</i><span>Execution receipt</span><i>→</i><span>Code + data digest</span>
-</div>
+The larger opportunity was to move decisions out of prose and into deterministic control.
 
-These checks do not prove that a cell annotation is biologically true, that a statistical model is the only appropriate one, or that a result will generalize to another cohort. They establish bounded execution, provenance, contract satisfaction, and rubric compliance. “Scientifically valid” in this article therefore means **valid under this frozen operational verifier**, not “certified biological truth.” Confounding, biological interpretation, and external replication remain scientific work.
+## Stop when the evidence is complete—not when the model says it is
 
-### 3. A governed candidate search
+The strongest stopping mechanism represents the task as a small set of typed evidence requirements. After every execution, a deterministic controller reads the real execution records and asks:
 
-Candidate mechanisms are not accumulated into one ever-changing prompt. Each mechanism receives its own lineage:
-
-1. mine public development traces for a specific source of overhead or failure;
-2. formulate one mechanism and freeze its predicted benefit and rejection conditions;
-3. use settled historical trajectories for zero-cost replay qualification;
-4. run an interleaved paired prospective screen on the public search set;
-5. reject the mechanism or freeze it before any later evaluation.
-
-The capability gate is evaluated before the efficiency ranking. This prevents the search from learning that incomplete scientific work is an easy way to save money.
-
-## From failed prompts to a typed control plane
-
-**P1 asked whether a general “stop when evidence looks complete” prompt could cut cost.** It could, but partly by omitting necessary scientific work. That ruled out unconstrained early stopping.
-
-**P4 then asked whether a narrower natural-language instruction could remove only redundant work.** In a three-pair prospective screen, scientific validity was preserved and no new hard violation appeared—but cost **increased by 29.53%** and action count increased.
-
-Trace inspection showed the model closing gaps serially, reconfirming completed work, and spending turns explaining that it was finished. Because the entire transcript returned in later calls, extra actions also inflated later input context.
-
-The conclusion was not merely “write a better prompt.” It was that stopping is a control decision and should not depend on persuasive prose.
+1. Are required analyses or artifacts still missing? Continue and return the unresolved items together.
+2. Is the required execution evidence complete? Stop generating new scientific actions and finalize.
+3. Is the state inconsistent, or is the budget exhausted before completion? Fail closed.
 
 <figure class="post-figure post-figure-wide">
-  <img src="{{ '/assets/images/blog/echo-bio/failure-driven-lineage.svg' | relative_url }}" alt="A timeline from P1 to P4 to P5: P1 is cheaper but scientifically degraded, P4 preserves validity but increases cost, and P5 moves termination into a deterministic typed control plane." width="1600" height="940" loading="lazy">
-  <figcaption>Each successor answers a concrete failure in the previous lineage. P5 does not silently retain the rejected prompts.</figcaption>
+  <img src="{{ '/assets/images/blog/echo-bio/p5-control-plane.svg' | relative_url }}" alt="Typed evidence requirements and executed artifacts feed a deterministic controller that chooses whether to continue, finalize, or fail closed." width="1500" height="980" loading="lazy">
+  <figcaption>Completion becomes recoverable state outside the conversation, while the independent scientific verifier still judges the resulting work.</figcaption>
 </figure>
 
-**P5 therefore asked whether completion could become a deterministic state transition rather than another topic for the model to discuss.** It moved completion out of the model transcript and introduced:
+The controller does not decide whether a biological conclusion is true. It decides whether the public execution contract has been completed well enough to stop. Scientific review remains independent and identical for both versions.
 
-- one content-addressed resource receipt shared by both paired arms;
-- a public compiler that translates the task's execution contract into typed evidence requirements without exposing expected answers or hidden rubric values;
-- a deterministic reducer that reads real execution receipts and returns only `continue_batch`, `finalize_now`, or `fail_closed`.
+This distinction removes a specific kind of waste: calls and actions that happen **after** the required evidence already exists. It does not remove the analysis needed to produce that evidence.
 
-If execution evidence is missing and budget remains, the reducer returns every unresolved requirement together. If the execution contract is complete, it prevents further scientific actions. If the budget is exhausted first, it fails closed.
+### What happened on the public development tasks?
 
-<ol class="decision-steps">
-  <li><strong>fail_closed</strong><span>The execution ledger is inconsistent, the budget is exhausted before the contract is complete, or required state cannot be recovered.</span></li>
-  <li><strong>continue_batch</strong><span>Evidence is incomplete; return the complete unresolved set in one typed batch rather than asking the model to rediscover gaps one by one.</span></li>
-  <li><strong>finalize_now</strong><span>All public execution requirements are satisfied; close scientific action generation and move to bounded finalization.</span></li>
-</ol>
-
-<figure class="post-figure post-figure-wide">
-  <img src="{{ '/assets/images/blog/echo-bio/p5-control-plane.svg' | relative_url }}" alt="P5 control plane showing typed evidence requirements and executed artifacts feeding a deterministic reducer that chooses continue batch, finalize now, or fail closed." width="1500" height="980" loading="lazy">
-  <figcaption>P5 decides whether the loop should continue. The same independent verifier still evaluates the resulting science in both arms.</figcaption>
-</figure>
-
-This separation is essential:
-
-- **P5 completion control:** Has the public execution contract been completed well enough to stop?
-- **Scientific verification:** Is the result executable, traceable, scientifically reviewable, and within the allowed claim boundary?
-
-The expected efficiency mechanism is equally specific. A prose-only controller can spend one turn announcing completion, another reconfirming it, and then carry both turns back into every later prompt. P5 stores completion as compact typed state outside the conversational transcript. When the contract is complete, it removes those post-completion actions and their recursively accumulated context; it does **not** remove the scientific actions needed to produce the evidence.
-
-## P5: prospective evidence on a fixed public task bank
-
-We evaluated the frozen P5 mechanism on a fixed public search-dev bank. The schedule contained 20 paired tasks spanning scRNA, bulk RNA-seq, GWAS, and proteomics. One pair failed shared resource selection before either arm began; it was not retried or replaced. The primary analysis therefore contained 19 paired attempts.
-
-Both arms shared the same provider/model policy, scientific runtime, resource receipt, evidence-checking substrate, execution limits, and verifier. The only arm difference was P5 evidence-complete termination enforcement.
-
-<aside class="reader-note">
-  <strong>How to read these numbers.</strong> This was a selected public <em>development</em> matrix, not an external benchmark or a sealed generalization test. Repeats of one task are correlated, so the primary uncertainty interval used 20,000 task-cluster, domain-stratified bootstrap replicates rather than treating every trajectory as an independent biological task. The single shared pre-arm failure contributes to the scheduled-task accounting but not to the 19-pair treatment estimand.
-</aside>
-
-### Main results
+We evaluated the frozen mechanism on a fixed public set spanning scRNA-seq, bulk RNA-seq, GWAS, and proteomics. Twenty paired tasks were scheduled. One failed shared resource selection before either version began, leaving 19 completed comparisons. The numbers below describe this selected development set, not an external benchmark.
 
 <div class="table-scroll">
 <table class="result-table">
-  <thead><tr><th>Endpoint</th><th>P5 vs identity harness</th><th>Interpretation</th></tr></thead>
+  <thead><tr><th>Measure</th><th>Typed stopping vs original loop</th><th>What it means</th></tr></thead>
   <tbody>
-    <tr><td>Settled provider cost</td><td class="metric-good">−21.96%<br><small>task-cluster 95% interval: 14.50% to 33.05%</small></td><td>Passed the preregistered 5% practical threshold.</td></tr>
-    <tr><td>Provider requests</td><td class="metric-good">−17.24%</td><td>Fewer model calls per scheduled task.</td></tr>
-    <tr><td>Input tokens</td><td class="metric-good">−26.94%</td><td>Less accumulated context returned to the provider.</td></tr>
-    <tr><td>Output tokens</td><td class="metric-good">−7.87%</td><td>Moderate reduction in generated text.</td></tr>
-    <tr><td>Executed scientific actions</td><td class="metric-good">−24.29%</td><td>Fewer actions after typed evidence completion.</td></tr>
-    <tr><td>Tool wall time</td><td class="metric-good">−11.87%</td><td>Lower measured execution time.</td></tr>
-    <tr><td>Scientifically valid attempts</td><td>P5: 18/19<br>Identity: 16/19</td><td>No aggregate validity loss in this public matrix.</td></tr>
-    <tr><td>New candidate-only hard violations</td><td>0</td><td>Passed the public-matrix hard-failure gate.</td></tr>
+    <tr><td>Provider cost</td><td class="metric-good">−21.96%<br><small>95% interval across tasks: 14.50% to 33.05%</small></td><td>Exceeded the 5% practical threshold set before testing.</td></tr>
+    <tr><td>Model requests</td><td class="metric-good">−17.24%</td><td>Fewer calls per scheduled task.</td></tr>
+    <tr><td>Input tokens</td><td class="metric-good">−26.94%</td><td>Less accumulated context returned to the model.</td></tr>
+    <tr><td>Output tokens</td><td class="metric-good">−7.87%</td><td>Less generated text.</td></tr>
+    <tr><td>Executed scientific actions</td><td class="metric-good">−24.29%</td><td>Fewer actions after evidence completion.</td></tr>
+    <tr><td>Tool execution time</td><td class="metric-good">−11.87%</td><td>Lower measured tool wall time.</td></tr>
+    <tr><td>Accepted results</td><td>Typed stopping: 18/19<br>Original loop: 16/19</td><td>No observed aggregate loss on this task set.</td></tr>
+    <tr><td>New critical failures</td><td>0</td><td>No new missing-evidence or protocol failure.</td></tr>
   </tbody>
 </table>
 </div>
 
-Two sensitivity views address the concern that failed runs can stop early and look artificially cheap:
+Failed runs can stop early and look artificially cheap, so we also examined only comparisons where both versions succeeded. The cost reduction was **15.25%** when both results were accepted, and **15.08%** when both were free of critical failures.
 
-<div class="table-scroll">
-<table class="result-table">
-  <thead><tr><th>Restricted comparison</th><th>Number of paired attempts</th><th>P5 cost reduction</th></tr></thead>
-  <tbody>
-    <tr><td>Only pairs where both arms produced scientifically valid outputs</td><td>16</td><td class="metric-good">15.25%</td></tr>
-    <tr><td>Only pairs where both arms were hard-violation-free</td><td>15</td><td class="metric-good">15.08%</td></tr>
-  </tbody>
-</table>
-</div>
+The effect was not deterministic. Five modified trajectories cost more than their paired original run, and repeats of the same task sometimes changed direction. The supported conclusion is aggregate and bounded:
 
-The result is aggregate, not deterministic. Five P5 trajectories cost more than their paired identity run, and repeated executions of the same task sometimes changed direction. The appropriate conclusion is therefore:
+> On this fixed public development set, evidence-aware stopping reduced calls, context, actions, and provider cost without an observed aggregate loss of accepted scientific results.
 
-> On this fixed public biomedical task matrix, typed evidence-aware termination reduced aggregate provider cost, requests, context, and executed actions without an observed aggregate loss of scientifically valid outputs.
+## A second opportunity: do not rediscover a registered toolbox
 
-It is not evidence that P5 saves cost on every run, proves scientific truth, generalizes to every biomedical task or model, or already improves a complete multi-generation RSI process.
+Trajectory analysis revealed another large cost surface before the research loop even began. A Biomni-style agent asks the model to select tools and libraries from an inventory. For an open-ended question, that flexibility is valuable. But for a registered task profile with a known execution contract, the system was repeatedly paying the model to rediscover a bounded capability set.
 
-## A1 asks: can one bounded model-mediated stage be removed entirely?
+We replaced that one stage with a deterministic resource compiler:
 
-P5 reduced redundant work *inside* the research loop. We then asked whether a complete model call could be removed before that loop begins. **A1 is a separate, bounded successor experiment; it is not folded into the P5 effect estimate.**
-
-A Biomni-style agent normally asks the provider to select tools and libraries from the available inventory. For task types whose required capability profile is already registered, this repeatedly pays a model to rediscover a bounded resource set. **A1** replaces that step with a deterministic registry compiler:
-
-- input: the public task type, execution contract, and frozen resource inventory;
-- output: a content-addressed resource receipt consumed by the unchanged P5 research loop;
-- safety boundary: an unknown task profile, inventory drift, or unreplayable projection fails closed instead of guessing;
-- treatment isolation: provider/model, downstream prompts, P5 stopping control, scientific runtime, and evidence verifier remain shared between arms.
+- it reads the public task type and frozen resource inventory;
+- it produces a content-addressed resource receipt for the unchanged downstream loop;
+- it refuses unknown task profiles or changed inventories instead of guessing;
+- it leaves the model, scientific runtime, stopping controller, and verifier unchanged.
 
 <figure class="post-figure post-figure-wide">
-  <img src="{{ '/assets/images/blog/echo-bio/a1-resource-compiler.svg' | relative_url }}" alt="A1 replaces a paid provider resource-selection call with a deterministic registry compiler for registered task profiles before both arms enter the same P5 and evidence-constraint loop." width="1500" height="880" loading="lazy">
-  <figcaption>A1 removes a complete provider call for registered profiles; it does not compress or weaken the downstream scientific evidence.</figcaption>
+  <img src="{{ '/assets/images/blog/echo-bio/a1-resource-compiler.svg' | relative_url }}" alt="A registry compiler replaces a paid resource-selection model call for registered task profiles before entering the unchanged evidence-constrained research loop." width="1500" height="880" loading="lazy">
+  <figcaption>For registered profiles, a deterministic compiler can remove one complete model-mediated stage without weakening downstream evidence requirements.</figcaption>
 </figure>
 
-The final public search-dev analysis contained eight task identities and twelve paired trajectories across scRNA, bulk RNA-seq, GWAS, and proteomics. Tasks—not repeated trajectories—received equal weight in the task-cluster analysis. The interval below comes from the exact domain-stratified task-cluster resampling distribution; it is uncertainty over this small selected development set, not a population-level claim about all biomedical tasks.
+The final public development analysis covered eight task identities and twelve paired trajectories across the four domains. Tasks—not repeated trajectories—received equal weight.
 
 <div class="table-scroll">
 <table class="result-table">
-  <thead><tr><th>A1 endpoint</th><th>Registry compiler vs provider selector</th><th>Interpretation</th></tr></thead>
+  <thead><tr><th>Measure</th><th>Registry compiler vs model selector</th><th>Interpretation</th></tr></thead>
   <tbody>
-    <tr><td>Full-pipeline provider cost</td><td class="metric-good">−38.901%<br><small>task-cluster 95% interval: 33.085% to 44.643%</small></td><td>Strong public search-dev efficiency signal for registered profiles.</td></tr>
-    <tr><td>Scientifically valid outputs</td><td>A1: 12/12<br>Provider-selector control: 10/12</td><td>No observed capability loss in this matrix.</td></tr>
-    <tr><td>Resource-selection provider calls</td><td class="metric-good">0 for A1</td><td>The targeted call was deterministically eliminated.</td></tr>
-    <tr><td>Total provider requests</td><td class="metric-good">−1.125 per task<br><small>95% interval: −1.313 to −0.938</small></td><td>The removed stage reduced complete-pipeline request count.</td></tr>
-    <tr><td>New A1 hard violations</td><td>0</td><td>Passed the public-matrix hard-failure gate.</td></tr>
+    <tr><td>Full-pipeline provider cost</td><td class="metric-good">−38.901%<br><small>95% interval across tasks: 33.085% to 44.643%</small></td><td>Strong development-set signal for registered profiles.</td></tr>
+    <tr><td>Accepted results</td><td>Compiler: 12/12<br>Model selector: 10/12</td><td>No observed loss on this matrix.</td></tr>
+    <tr><td>Resource-selection model calls</td><td class="metric-good">0 for the compiler</td><td>The targeted call was eliminated.</td></tr>
+    <tr><td>Total model requests</td><td class="metric-good">−1.125 per task<br><small>95% interval: −1.313 to −0.938</small></td><td>Fewer complete-pipeline requests.</td></tr>
+    <tr><td>New critical failures</td><td>0</td><td>No new failure introduced by the compiler.</td></tr>
     <tr><td>Downstream-only cost</td><td>−3.373%<br><small>95% interval: −6.844% to 12.824%</small></td><td>Downstream-only non-inferiority was not established.</td></tr>
   </tbody>
 </table>
 </div>
 
-This is a solid but intentionally bounded conclusion: **for registered task profiles under a frozen resource inventory, A1 eliminated the resource-selection provider call, preserved observed scientific validity, and reduced full-pipeline cost.** It does not establish open-domain resource selection, nor does it imply that downstream reasoning became 38.9% cheaper. The large full-pipeline effect includes the model call that A1 was designed to remove.
+The 38.9% figure must be read carefully. It includes the resource-selection call that the compiler was designed to remove. It does **not** mean that downstream scientific reasoning became 38.9% cheaper. The result applies to the registered task profiles and frozen inventory we tested, not to open-domain resource selection.
 
-## What this means for agent builders and scientists
+## What we learned
 
-For an agent builder, the main lesson is to measure *where* cost enters the trajectory. P5 targets repeated post-completion interaction; A1 targets a whole model-mediated stage that can be compiled safely for registered profiles. Neither result says that prompts, observations, or resource selection should always be shorter.
+The project left us with five practical lessons.
 
-For a biomedical researcher, the important protection is that efficiency is evaluated only after the run remains inspectable: code actually executed, artifacts can be reopened, quantitative claims point to typed evidence, and domain checks still pass. A cheaper narrative without that chain is not counted as a cheaper scientific iteration.
+1. **Optimize cost per accepted research iteration, not cost per answer.** Otherwise, incomplete work can look like progress.
+2. **The verifier is a scientific boundary, not an optimization.** It must be the same for the original and modified systems.
+3. **Typed state can be cheaper than conversational self-report.** A model does not need another turn to announce that an externally verifiable contract is complete.
+4. **Removing a whole model call can matter more than shaving a few fields from context.** But this is safe only when the stage is deterministic and the fallback boundary is explicit.
+5. **Negative results map the real design space.** Several plausible compression strategies preserved evidence but saved too little; others made outputs longer or could not be replayed reliably.
 
-For RSI research, Echo-Bio supplies a missing denominator. The relevant quantity is not simply tokens per answer, but cost per verifier-accepted research iteration. Only after this denominator is stable does “more rounds under the same budget” become a meaningful experimental claim.
+For recursive self-improvement, this work supplies a missing denominator. More rounds under the same budget are meaningful only if they are more **verifier-accepted research rounds**.
 
-## What this changes about the RSI story
+Echo-Bio has not yet shown that cheaper accepted rounds lead to a better final discovery. That requires a different long-horizon experiment: give systems the same total budget, let them run different numbers of propose–execute–verify cycles, and compare the final scientific result. Our current results establish a prerequisite for that experiment, not its outcome.
 
-Echo-Bio does not yet claim that more affordable rounds automatically produce a better final discovery. That requires a separate long-horizon experiment in which multiple agents receive the same total budget and are compared after different numbers of propose–execute–verify iterations.
+## Scope and code
 
-What the present evidence establishes is the prerequisite for that experiment:
+The evidence here comes from selected public development tasks, not an external benchmark or a claim of universal generalization. The experiments used a fixed provider/model policy and operational verifier. Human scientific judgment, independent replication, and testing across other models and task distributions remain necessary.
 
-<div class="table-scroll">
-<table class="result-table">
-  <thead><tr><th>Question</th><th>Current evidence</th></tr></thead>
-  <tbody>
-    <tr><td>Can a cost-only harness search select the wrong biomedical research agent?</td><td>Yes. P1 was 14.08% cheaper but crossed the scientific capability boundary and introduced five new hard violations.</td></tr>
-    <tr><td>Does scientific research require a stronger equivalence criterion than final-answer success?</td><td>Yes. Promotion depends on execution receipts, artifact integrity, claim–evidence traceability, and scientific rubric checks.</td></tr>
-    <tr><td>Can a deterministic harness mechanism reduce the cost of a valid research iteration?</td><td>P5 provides a positive public search-dev signal: −21.96% aggregate provider cost with 18/19 scientifically valid attempts versus 16/19 for identity.</td></tr>
-    <tr><td>Can a whole model-mediated stage be removed safely?</td><td>For registered profiles, A1 removed the resource-selection provider call and reduced full-pipeline cost by 38.901%, with scientifically valid outputs of 12/12 versus 10/12 for the provider-selector control.</td></tr>
-    <tr><td>Has Echo-Bio proven end-to-end RSI improvement?</td><td>No. Equal-total-budget multi-round improvement remains the next causal experiment.</td></tr>
-  </tbody>
-</table>
-</div>
-
-The core contribution is thus not “a cheaper agent” in isolation. It is a formulation and evaluation method for **cost-efficient scientific recursion**: optimize the harness only inside a region where scientific execution and evidence remain valid.
-
-> More iterations are useful only when they remain scientific iterations.
-
-## Reproducibility and code-release boundary
-
-The P5 and A1 results in this article are bound to source tag `echo-bio-a1-task-diversity-stage-a-result-v1` (commit `abea8cb`). The sanitized, user-facing `0.1.0rc1` code release is available at [Zimiao1025/Echo-Bio](https://github.com/Zimiao1025/Echo-Bio). It was prepared from the frozen source rather than from the later exploratory working tree.
-
-The public package is intentionally narrower than the research workspace. It includes the user runtime, evidence and trace infrastructure, verifier components, the reviewed Biomni hook patch, and an initial provider guide for **DeepSeek V4.1 Flash** (`deepseek-flash`). It excludes experiment-reproduction scripts, benchmark corpora, credentials, private or sealed evaluators, human-review material, authorization records, raw paid-response receipts, and internal reader/reviewer notes.
-
-This release boundary matters scientifically as well as operationally: readers should be able to reproduce the public method without accidentally receiving the hidden evaluation material that defined the original experimental separation.
+The sanitized, user-facing `0.1.0rc1` release is available at [Zimiao1025/Echo-Bio](https://github.com/Zimiao1025/Echo-Bio). It includes the runtime, evidence and trace infrastructure, verifier components, reviewed Biomni integration patch, and DeepSeek setup guide. It excludes experiment-reproduction scripts, benchmark corpora, credentials, private evaluators, human-review records, and raw paid responses.
 
 ---
 
 ### References
 
 1. Huang, K. et al. [“Biomni: A General-Purpose Biomedical AI Agent.”](https://www.biorxiv.org/content/10.1101/2025.05.30.656746v1) bioRxiv, 2025. [Code](https://github.com/snap-stanford/Biomni).
-2. Jin, R. et al. [“STELLA: Self-Evolving LLM Agent for Biomedical Research.”](https://arxiv.org/abs/2507.02004) arXiv:2507.02004, 2025.
-3. Xue, S. et al. [“ScienceBuddy: Recursive-in-Recursive Self-Improvement for Interactive Scientific Agents.”](https://arxiv.org/abs/2609.17523) arXiv:2609.17523, 2026.
-4. Liu, H. et al. [“SoL-Pi: Recursively Scaling Auto-Research Loops for Efficient Agent Harness.”](https://arxiv.org/abs/2609.20519) arXiv:2609.20519, 2026. [Project page](https://nvlabs.github.io/SoL-Pi/).
+2. Weng, L. [“Harness Engineering for Self-Improvement.”](https://lilianweng.github.io/posts/2026-07-04-harness/) Lil’Log, 2026.
+3. Liu, H. et al. [“SoL-Pi: Recursively Scaling Auto-Research Loops for Efficient Agent Harness.”](https://arxiv.org/abs/2609.20519) arXiv:2609.20519, 2026. [Project page](https://nvlabs.github.io/SoL-Pi/).
+4. Jin, R. et al. [“STELLA: Self-Evolving LLM Agent for Biomedical Research.”](https://arxiv.org/abs/2507.02004) arXiv:2507.02004, 2025.
+5. Xue, S. et al. [“ScienceBuddy: Recursive-in-Recursive Self-Improvement for Interactive Scientific Agents.”](https://arxiv.org/abs/2609.17523) arXiv:2609.17523, 2026.
 
 ### Suggested citation
 
-Li, H. “Echo-Bio: When Cost Minimization Fails for Biomedical Research Agents.” 2026.<br>
+Hongliang Li and Shuibai Zhang. “Echo-Bio: When Cost Minimization Fails for Biomedical Research Agents.” 2026.<br>
 [Article](https://zimiao1025.github.io/blog/2026/10/27/echo-bio/) · [Code](https://github.com/Zimiao1025/Echo-Bio)
